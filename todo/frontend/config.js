@@ -1,19 +1,12 @@
 // ============================================================
 // SUPABASE & CANLI SUNUCU BAĞLANTI AYARLARI
-// 
-// Supabase panelinden (supabase.com) aldığınız URL ve Anon Key'i
-// aşağıdaki tırnakların içine yapıştırmanız yeterlidir.
-// Bilgileri girmeden önce de uygulama yerel hafızayla (localStorage)
-// sorunsuz çalışmaya devam eder.
 // ============================================================
 
 const SUPABASE_CONFIG = {
-    // Supabase Dashboard -> Project Settings -> API kısmından alabilirsiniz:
-    url: '', // Örn: 'https://xyzabcdefghijklm.supabase.co'
-    anonKey: '' // Örn: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    url: 'https://jwnmoqbghipkehcmnemv.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3bm1vcWJnaGlwa2VoY21uZW12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyMzgyODQsImV4cCI6MjEwNTgxNDI4NH0.K6km1yxak9ASpXHKK28plCDBsTPuvFfJuudR0gqBFnI'
 };
 
 const BACKEND_CONFIG = {
-    // Render'a yüklediğinizde Render'ın size verdiği Web Service adresi:
-    apiUrl: 'http://localhost:5000' // Örn: 'https://todo-backend-xyz.onrender.com'
+    apiUrl: 'http://localhost:5000'
 };
