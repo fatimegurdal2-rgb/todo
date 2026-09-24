@@ -1,0 +1,2728 @@
+/* ============================================================
+   Todo - Notion-Style Modern Enterprise UI System
+   Aesthetics: Authentic Notion Canvas, Soft Pastel Pills, Clean Minimalism
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Caveat:wght@600;700&family=Patrick+Hand&display=swap');
+
+:root {
+    /* Notion Light Palette */
+    --bg-page: #fbfbfa;
+    --bg-surface: #ffffff;
+    --bg-surface-subtle: #f7f6f3;
+    --bg-surface-hover: #efeeea;
+    --bg-nav: rgba(251, 251, 250, 0.92);
+    
+    --text-primary: #37352f;
+    --text-secondary: #787774;
+    --text-muted: #9b9a97;
+    --text-inverse: #ffffff;
+
+    --border-subtle: #e9e9e7;
+    --border-hover: #dfdfde;
+    --border-focus: #2eaadc;
+
+    /* Notion Brand Accents */
+    --primary: #2383e2;
+    --primary-hover: #1d65c1;
+    --primary-subtle: rgba(35, 131, 226, 0.08);
+    --primary-border: rgba(35, 131, 226, 0.25);
+    --primary-gradient: linear-gradient(135deg, #2383e2 0%, #0c66e4 100%);
+    --accent-glow: rgba(35, 131, 226, 0.2);
+
+    /* Notion Board Column Pills */
+    --col-todo-bg: #e3e2e0;
+    --col-todo-text: #37352f;
+    --col-progress-bg: #d3e5ef;
+    --col-progress-text: #18558a;
+    --col-done-bg: #dbeddb;
+    --col-done-text: #1c7333;
+
+    /* Notion Tag Pills */
+    --tag-blue-bg: #d3e5ef;
+    --tag-blue-text: #18558a;
+    --tag-green-bg: #dbeddb;
+    --tag-green-text: #1c7333;
+    --tag-yellow-bg: #fdecc8;
+    --tag-yellow-text: #8f6409;
+    --tag-red-bg: #ffe2dd;
+    --tag-red-text: #c43827;
+    --tag-purple-bg: #eedbf5;
+    --tag-purple-text: #783587;
+    --tag-gray-bg: #e3e2e0;
+    --tag-gray-text: #5a5a58;
+
+    /* Notion Shadows & Radii */
+    --shadow-card: 0 1px 3px rgba(15, 15, 15, 0.06), 0 0 0 1px rgba(15, 15, 15, 0.05);
+    --shadow-card-hover: 0 4px 8px rgba(15, 15, 15, 0.08), 0 0 0 1px rgba(15, 15, 15, 0.08);
+    --shadow-dropdown: 0 8px 24px rgba(15, 15, 15, 0.12), 0 0 0 1px rgba(15, 15, 15, 0.06);
+
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --font-heading: 'Plus Jakarta Sans', var(--font-sans);
+    --transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Notion Dark Mode */
+[data-theme="dark"] {
+    --bg-page: #191919;
+    --bg-surface: #202020;
+    --bg-surface-subtle: #252525;
+    --bg-surface-hover: #2f2f2f;
+    --bg-nav: rgba(25, 25, 25, 0.92);
+    
+    --text-primary: #e6e6e6;
+    --text-secondary: #9b9a97;
+    --text-muted: #6f6e6b;
+    --text-inverse: #191919;
+
+    --border-subtle: #2e2e2e;
+    --border-hover: #3b3b3b;
+    --border-focus: #2eaadc;
+
+    --primary-subtle: rgba(35, 131, 226, 0.15);
+    --primary-border: rgba(35, 131, 226, 0.35);
+
+    --col-todo-bg: #37352f;
+    --col-todo-text: #9b9a97;
+    --col-progress-bg: #1e3a5f;
+    --col-progress-text: #70b3e6;
+    --col-done-bg: #1c3d24;
+    --col-done-text: #6bc987;
+
+    --tag-blue-bg: #1e3a5f;
+    --tag-blue-text: #70b3e6;
+    --tag-green-bg: #1c3d24;
+    --tag-green-text: #6bc987;
+    --tag-yellow-bg: #4a3610;
+    --tag-yellow-text: #f5c26b;
+    --tag-red-bg: #4c2323;
+    --tag-red-text: #f27979;
+    --tag-purple-bg: #3d2345;
+    --tag-purple-text: #d48ce6;
+    --tag-gray-bg: #37352f;
+    --tag-gray-text: #9b9a97;
+
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    --shadow-card-hover: 0 4px 10px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.09);
+    --shadow-dropdown: 0 10px 28px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Reset & Basics */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background-color: var(--bg-page);
+    height: 100vh;
+    overflow: hidden;
+    font-size: 14px;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.hidden { display: none !important; }
+
+/* ============================================================
+   NOTION-STYLE LOGIN / AUTH SCREEN
+   ============================================================ */
+.auth-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 15% 15%, rgba(46, 170, 220, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(15, 15, 15, 0.04) 0%, transparent 45%),
+                var(--bg-page);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.auth-ambient-orb {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+}
+.orb-1 {
+    top: 8%;
+    left: 12%;
+    background: radial-gradient(circle, #2eaadc 0%, transparent 70%);
+}
+.orb-2 {
+    bottom: 8%;
+    right: 12%;
+    background: radial-gradient(circle, #0c66e4 0%, transparent 70%);
+}
+
+.auth-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-dropdown);
+    padding: 40px;
+    animation: authPop 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes authPop {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 26px;
+}
+
+.notion-icon-badge {
+    width: 52px;
+    height: 52px;
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 6px rgba(15, 15, 15, 0.05);
+}
+
+.auth-brand-name {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    font-family: var(--font-heading);
+}
+
+.auth-subtitle {
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    margin-top: 6px;
+    line-height: 1.45;
+}
+
+/* Auth Tabs */
+.auth-tabs {
+    display: flex;
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-subtle);
+    padding: 3px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 22px;
+    gap: 3px;
+}
+
+.auth-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 8px 12px;
+    border-radius: var(--radius-xs);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+.auth-tab:hover {
+    color: var(--text-primary);
+}
+.auth-tab.active {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(15, 15, 15, 0.08);
+}
+
+/* Form */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-icon-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 13px;
+    color: var(--text-muted);
+    font-size: 13.5px;
+    pointer-events: none;
+}
+
+.auth-input {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    transition: var(--transition);
+    outline: none;
+}
+.auth-input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 2px rgba(46, 170, 220, 0.2);
+}
+
+/* Silinik (Faded/Muted) Placeholder */
+.auth-input::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.42 !important;
+    font-weight: 400 !important;
+}
+
+.input-eye-btn {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px;
+    border-radius: 4px;
+}
+.input-eye-btn:hover { color: var(--text-primary); }
+
+.btn-auth-submit {
+    width: 100%;
+    padding: 11px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition);
+}
+.btn-auth-submit:hover {
+    background: var(--primary-hover);
+}
+
+/* Şifremi Unuttum Alt Butonu */
+.auth-forgot-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 14px;
+}
+
+.btn-forgot-password-link {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: var(--transition);
+    padding: 4px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-forgot-password-link:hover {
+    color: var(--primary);
+}
+
+/* E-posta ile Şifre Sıfırlama Paneli (Yukarı Taşındı) */
+.phone-recovery-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: -26px;
+    animation: authPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.recovery-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2px;
+}
+
+#btnSendCode {
+    margin-top: 6px !important;
+}
+
+.btn-recovery-back {
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-subtle);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+.btn-recovery-back:hover {
+    background: var(--bg-surface-hover);
+    color: var(--primary);
+}
+
+.recovery-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.recovery-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 2px 0 0 0;
+    line-height: 1.4;
+}
+
+.auth-guest-link {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+.auth-guest-link a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+.auth-guest-link a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================
+   NOTION TOP NAVBAR (Breadcrumb + Controls)
+   ============================================================ */
+.top-navbar {
+    height: 52px;
+    background: var(--bg-nav);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10000;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+/* Notion Breadcrumbs */
+.notion-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.crumb-workspace {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: var(--transition);
+}
+.crumb-workspace:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-primary);
+}
+
+.crumb-separator {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.crumb-page {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 4px 8px;
+    border-radius: var(--radius-xs);
+}
+
+/* Nav View Switcher (Tabs) */
+.nav-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--bg-surface-subtle);
+    padding: 2px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+}
+
+.nav-tab-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: var(--radius-xs);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    background: transparent;
+}
+.nav-tab-item:hover {
+    color: var(--text-primary);
+    background: var(--bg-surface-hover);
+}
+.nav-tab-item.active {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(15, 15, 15, 0.08);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Search */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.search-icon-nav {
+    position: absolute;
+    left: 10px;
+    color: var(--text-muted);
+    font-size: 12px;
+    pointer-events: none;
+}
+.search-input-nav {
+    width: 180px;
+    padding: 6px 10px 6px 28px;
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+    color: var(--text-primary);
+    font-size: 12.5px;
+    font-family: var(--font-sans);
+    outline: none;
+    transition: var(--transition);
+}
+.search-input-nav:focus {
+    width: 240px;
+    background: var(--bg-surface);
+    border-color: var(--border-focus);
+}
+
+/* Notion Style Primary Button */
+.btn-notion-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: var(--radius-xs);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+}
+.btn-notion-primary:hover {
+    background: var(--primary-hover);
+}
+
+.theme-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 14px;
+}
+.theme-toggle-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-surface-hover);
+    border-color: var(--border-subtle);
+}
+
+/* User Menu */
+.user-menu-wrapper {
+    position: relative;
+    z-index: 10001;
+}
+
+.user-profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 8px 3px 4px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: var(--transition);
+}
+.user-profile-btn:hover {
+    background: var(--bg-surface-hover);
+    border-color: var(--border-subtle);
+}
+
+.user-avatar-mini {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-xs);
+    background: #e3e2e0;
+    color: #37352f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.user-name-label {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    width: 220px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    box-shadow: 0 12px 36px rgba(15, 15, 15, 0.22), 0 0 0 1px var(--border-subtle);
+    padding: 6px;
+    z-index: 99999 !important;
+}
+
+.dropdown-user-info {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 4px;
+}
+.dropdown-name { font-weight: 600; font-size: 13px; color: var(--text-primary); }
+.dropdown-email { font-size: 11px; color: var(--text-secondary); word-break: break-all; }
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: var(--radius-xs);
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+}
+.dropdown-item:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-primary);
+}
+.dropdown-item.danger:hover {
+    background: #ffe2dd;
+    color: #c43827;
+}
+
+/* ============================================================
+   MAIN NOTION PAGE AREA
+   ============================================================ */
+.app-container {
+    flex: 1;
+    height: calc(100vh - 52px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+}
+
+.view-section {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+}
+.view-section.active { display: flex; }
+
+/* Notion Page Title Banner (Centered Layout with Time & Date Emphasis) */
+.notion-page-header {
+    padding: 28px 40px 14px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.notion-page-header.centered-header {
+    align-items: center;
+    text-align: center;
+    padding: 32px 40px 18px 40px;
+}
+
+.notion-page-header.centered-header .notion-icon-and-title {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.notion-page-header.centered-header .notion-page-emoji {
+    font-size: 46px;
+    line-height: 1;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    cursor: default;
+    transition: var(--transition);
+}
+.notion-page-header.centered-header .notion-page-emoji:hover {
+    transform: scale(1.15) rotate(6deg);
+}
+
+/* Distinct Centered Title with 'Outfit' Display Font */
+.notion-header-center-title {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--text-primary);
+    line-height: 1.1;
+    text-align: center;
+    margin: 2px auto 0 auto;
+}
+
+/* ============================================================
+   DIGITAL CLOCK WITH SLEEPING & EXPRESSIVE CAT (Pano Saati)
+   ============================================================ */
+.digital-cat-clock-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 4px auto 2px auto;
+    width: fit-content;
+}
+
+/* Sleeping Cat Wrapper & Click Animation */
+.sleeping-cat-wrapper {
+    position: relative;
+    z-index: 5;
+    margin-bottom: -10px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.sleeping-cat-wrapper:hover {
+    transform: scale(1.05);
+}
+.sleeping-cat-wrapper:active {
+    transform: scale(0.96);
+}
+
+/* Floating animated Zzz or Sweat bubbles */
+.cat-zzz-float {
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    display: flex;
+    gap: 4px;
+    pointer-events: none;
+}
+.z-particle {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    color: #f59e0b;
+    opacity: 0;
+    line-height: 1;
+}
+.z-1 { font-size: 11px; animation: zFloat 2.8s infinite 0.2s ease-in-out; }
+.z-2 { font-size: 14px; animation: zFloat 2.8s infinite 0.9s ease-in-out; }
+.z-3 { font-size: 18px; animation: zFloat 2.8s infinite 1.6s ease-in-out; }
+
+@keyframes zFloat {
+    0% { opacity: 0; transform: translateY(6px) scale(0.6); }
+    25% { opacity: 0.95; }
+    70% { opacity: 0.6; }
+    100% { opacity: 0; transform: translateY(-22px) translateX(10px) scale(1.25); }
+}
+
+/* The Cute Cat Figure */
+.sleeping-cat-figure {
+    position: relative;
+    width: 104px;
+    height: 48px;
+    animation: catBreathing 2.8s ease-in-out infinite;
+    transform-origin: bottom center;
+}
+
+@keyframes catBreathing {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03) translateY(-1.5px); }
+}
+
+/* Curled Ginger Fur Body */
+.cat-body-sphere {
+    position: absolute;
+    right: 4px;
+    bottom: 0;
+    width: 82px;
+    height: 44px;
+    background: linear-gradient(145deg, #f59e0b 0%, #d97706 70%, #b45309 100%);
+    border-radius: 44px 44px 18px 18px;
+    box-shadow: 0 4px 10px rgba(180, 83, 9, 0.35);
+    overflow: hidden;
+}
+
+/* Tabby Stripes on Back */
+.cat-stripes {
+    position: absolute;
+    top: 6px;
+    right: 18px;
+    display: flex;
+    gap: 8px;
+}
+.cat-stripes span {
+    width: 6px;
+    height: 14px;
+    background: rgba(146, 64, 14, 0.35);
+    border-radius: 4px;
+    transform: rotate(15deg);
+}
+
+/* Dangling Tail with gentle sway */
+.cat-tail-dangle {
+    position: absolute;
+    right: -4px;
+    bottom: 2px;
+    width: 14px;
+    height: 36px;
+    border-right: 7px solid #d97706;
+    border-bottom: 7px solid #d97706;
+    border-radius: 0 0 16px 8px;
+    transform-origin: top right;
+    animation: tailSway 3.6s ease-in-out infinite;
+    z-index: 6;
+    filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.2));
+}
+
+@keyframes tailSway {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(9deg); }
+}
+
+/* Cat Head with Ears and Sleeping Face */
+.cat-head-sphere {
+    position: absolute;
+    left: 2px;
+    bottom: 2px;
+    width: 42px;
+    height: 38px;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 70%, #d97706 100%);
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    z-index: 7;
+}
+
+/* Ears */
+.cat-ear {
+    position: absolute;
+    top: -8px;
+    width: 14px;
+    height: 14px;
+    background: #f59e0b;
+    border-radius: 3px 10px 2px 2px;
+    transition: transform 0.3s ease;
+}
+.cat-ear.ear-left {
+    left: 4px;
+    transform: rotate(-18deg);
+}
+.cat-ear.ear-right {
+    right: 8px;
+    transform: rotate(26deg);
+}
+.ear-inner {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 8px;
+    height: 8px;
+    background: #fda4af;
+    border-radius: 2px 6px 2px 2px;
+}
+
+/* Face Features */
+.cat-face-features {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Eyebrows (for stress / worried look) */
+.cat-eyebrows {
+    position: absolute;
+    top: 13px;
+    left: 8px;
+    width: 20px;
+    display: flex;
+    justify-content: space-between;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.cat-eyebrow {
+    width: 6px;
+    height: 1.6px;
+    background: #78350f;
+    border-radius: 2px;
+}
+
+.cat-closed-eye {
+    position: absolute;
+    top: 17px;
+    width: 7px;
+    height: 4px;
+    border-bottom: 2.2px solid #78350f;
+    border-radius: 0 0 50% 50%;
+    transition: all 0.3s ease;
+}
+.cat-closed-eye.left { left: 8px; }
+.cat-closed-eye.right { left: 20px; }
+
+.cat-pink-nose {
+    position: absolute;
+    top: 21px;
+    left: 15px;
+    width: 5px;
+    height: 4px;
+    background: #f43f5e;
+    border-radius: 2px 2px 4px 4px;
+}
+
+/* Mouth Shape */
+.cat-mouth-shape {
+    position: absolute;
+    top: 25px;
+    left: 15px;
+    width: 5px;
+    height: 3px;
+    border-bottom: 1.4px solid #78350f;
+    border-radius: 0 0 3px 3px;
+    transition: all 0.3s ease;
+}
+
+/* Rosy Blush Cheeks (Visible when happy) */
+.cat-blush {
+    position: absolute;
+    top: 22px;
+    width: 5px;
+    height: 3px;
+    background: #f43f5e;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.cat-blush.left { left: 3px; }
+.cat-blush.right { right: 12px; }
+
+/* Stress Sweat Drop (Appears when stressed / low completion %) */
+.cat-sweat-drop {
+    position: absolute;
+    top: -6px;
+    right: 8px;
+    font-size: 14px;
+    opacity: 0;
+    transform: scale(0.3) translateY(4px);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+}
+
+/* Whiskers */
+.cat-whiskers-left,
+.cat-whiskers-right {
+    position: absolute;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.cat-whiskers-left { left: -6px; }
+.cat-whiskers-right { right: 8px; }
+
+.w-line {
+    width: 10px;
+    height: 1px;
+    background: rgba(120, 53, 15, 0.45);
+}
+.cat-whiskers-left .w-line:nth-child(1) { transform: rotate(-8deg); }
+.cat-whiskers-left .w-line:nth-child(2) { transform: rotate(10deg); }
+.cat-whiskers-right .w-line:nth-child(1) { transform: rotate(8deg); }
+.cat-whiskers-right .w-line:nth-child(2) { transform: rotate(-10deg); }
+
+/* Front Paws Tucked in */
+.cat-paws-front {
+    position: absolute;
+    left: 22px;
+    bottom: -1px;
+    display: flex;
+    gap: 4px;
+    z-index: 8;
+}
+.cat-paw-tucked {
+    width: 12px;
+    height: 7px;
+    background: #fffbeb;
+    border-radius: 6px 6px 3px 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* Purr / Mood Speech Bubble */
+.cat-purr-balloon {
+    position: absolute;
+    top: -26px;
+    left: -14px;
+    background: #ffffff;
+    color: #92400e;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.7) translateY(8px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 15;
+    white-space: nowrap;
+}
+.cat-purr-balloon.show {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+[data-theme="dark"] .cat-purr-balloon {
+    background: #1e293b;
+    color: #fef08a;
+    border-color: rgba(253, 224, 71, 0.3);
+}
+
+/* ============================================================
+   DYNAMIC CAT MOOD / STRESS STATES (Yüzdeye Göre Stres & Rahatlama)
+   ============================================================ */
+
+/* 1. STRESSED STATE (Yüzde Düşükken: 0% - 39%) */
+.sleeping-cat-figure.mood-stressed {
+    animation: catBreathingStressed 1.3s ease-in-out infinite !important;
+}
+@keyframes catBreathingStressed {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50% { transform: scale(1.04) translateY(-2px); }
+}
+
+/* Stressed Pinned-back Ears */
+.sleeping-cat-figure.mood-stressed .cat-ear.ear-left {
+    transform: rotate(-38deg) translateY(2px) !important;
+}
+.sleeping-cat-figure.mood-stressed .cat-ear.ear-right {
+    transform: rotate(40deg) translateY(2px) !important;
+}
+
+/* Stressed Angled Eyebrows & Worried Eyes */
+.sleeping-cat-figure.mood-stressed .cat-eyebrows {
+    opacity: 1;
+}
+.sleeping-cat-figure.mood-stressed .cat-eyebrow.left {
+    transform: rotate(26deg);
+}
+.sleeping-cat-figure.mood-stressed .cat-eyebrow.right {
+    transform: rotate(-26deg);
+}
+
+.sleeping-cat-figure.mood-stressed .cat-closed-eye.left {
+    border-bottom: 2.4px solid #78350f;
+    transform: rotate(14deg);
+}
+.sleeping-cat-figure.mood-stressed .cat-closed-eye.right {
+    border-bottom: 2.4px solid #78350f;
+    transform: rotate(-14deg);
+}
+
+/* Sweat Drop (Ter Damlası) Animation */
+.sleeping-cat-figure.mood-stressed .cat-sweat-drop {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    animation: sweatDrip 1.5s infinite ease-in-out;
+}
+@keyframes sweatDrip {
+    0% { transform: translateY(-2px) scale(0.9); opacity: 0.8; }
+    50% { transform: translateY(3px) scale(1.15); opacity: 1; }
+    100% { transform: translateY(-2px) scale(0.9); opacity: 0.8; }
+}
+
+/* Wavy Nervous Mouth */
+.sleeping-cat-figure.mood-stressed .cat-mouth-shape {
+    width: 6px;
+    height: 4px;
+    border-bottom: 2px solid #78350f;
+    border-radius: 3px;
+    animation: nervousMouth 0.8s infinite;
+}
+@keyframes nervousMouth {
+    0%, 100% { transform: scaleX(1); }
+    50% { transform: scaleX(0.75); }
+}
+
+/* Nervous Tail Twitch */
+.sleeping-cat-figure.mood-stressed .cat-tail-dangle {
+    animation: tailTwitchFast 1.1s ease-in-out infinite !important;
+}
+@keyframes tailTwitchFast {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(14deg); }
+    50% { transform: rotate(-4deg); }
+    75% { transform: rotate(12deg); }
+}
+
+/* 2. FOCUSED STATE (Orta Seviye: 40% - 79%) */
+.sleeping-cat-figure.mood-focused {
+    animation: catBreathing 2.8s ease-in-out infinite;
+}
+.sleeping-cat-figure.mood-focused .cat-tail-dangle {
+    animation: tailSway 3.6s ease-in-out infinite;
+}
+
+/* 3. HAPPY / RELAXED STATE (Yüksek Seviye: 80% - 100%) */
+.sleeping-cat-figure.mood-happy {
+    animation: catBreathingSlow 3.8s ease-in-out infinite;
+}
+@keyframes catBreathingSlow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03) translateY(-1px); }
+}
+
+/* Happy Smiling Eyes (^ ^) */
+.sleeping-cat-figure.mood-happy .cat-closed-eye {
+    border-bottom: none !important;
+    border-top: 2.4px solid #78350f !important;
+    border-radius: 50% 50% 0 0 !important;
+    top: 19px !important;
+    height: 4px;
+}
+
+/* Happy Smiling Mouth (:3) */
+.sleeping-cat-figure.mood-happy .cat-mouth-shape {
+    border-bottom: 2px solid #78350f;
+    border-radius: 0 0 6px 6px;
+    width: 8px;
+    top: 25px;
+}
+
+/* Happy Rosy Blush Cheeks */
+.sleeping-cat-figure.mood-happy .cat-blush {
+    opacity: 0.85;
+}
+
+/* Peaceful Soft Tail */
+.sleeping-cat-figure.mood-happy .cat-tail-dangle {
+    animation: tailSway 4.2s ease-in-out infinite;
+}
+
+/* ---------------- TRANSPARENT DIGITAL CLOCK BASE ---------------- */
+.cat-digital-clock-base {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 2px 10px 4px 10px;
+    min-width: 270px;
+    transition: var(--transition);
+    position: relative;
+    z-index: 2;
+}
+
+[data-theme="dark"] .cat-digital-clock-base {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Screen (Transparent) */
+.clock-display-screen {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 2px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Top Screen Status Bar */
+.clock-top-indicators {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.clock-led-status {
+    color: #10b981;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+
+.live-dot-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
+    animation: livePulse 2s infinite;
+}
+
+.clock-day-label {
+    color: #0284c7;
+    text-transform: uppercase;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+[data-theme="dark"] .clock-day-label {
+    color: #38bdf8;
+}
+
+/* Digital Main Digits (HH:MM:SS) - High Contrast & Clean */
+.clock-time-display {
+    text-align: center;
+    margin: 2px 0 0 0;
+}
+
+.clock-digits-main {
+    font-family: 'Outfit', monospace, sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    display: inline-block;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+[data-theme="dark"] .clock-digits-main {
+    color: #38bdf8;
+    text-shadow: 0 0 14px rgba(56, 189, 248, 0.55);
+}
+
+/* Bottom Bar - Centered Date */
+.clock-bottom-indicators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding-top: 2px;
+    border-top: none;
+}
+
+.clock-date-text {
+    color: var(--text-secondary);
+    font-family: var(--font-heading);
+}
+[data-theme="dark"] .clock-date-text {
+    color: #cbd5e1;
+}
+
+/* Centered Stats Bar */
+.notion-stats-bar.centered-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+/* Notion Filter / Action Bar */
+.notion-controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 12px;
+    gap: 12px;
+    width: 100%;
+}
+
+.notion-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.notion-filter-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 12px;
+    border-radius: var(--radius-xs);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+.notion-filter-btn:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-primary);
+}
+.notion-filter-btn.active {
+    background: var(--bg-surface-hover);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+
+/* Dynamic Stats Pill */
+.notion-stats-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.notion-pill-stat {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: var(--radius-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.pill-todo { background: var(--col-todo-bg); color: var(--col-todo-text); }
+.pill-progress { background: var(--col-progress-bg); color: var(--col-progress-text); }
+.pill-done { background: var(--col-done-bg); color: var(--col-done-text); }
+
+.notion-progress-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+.notion-progress-center .mini-bar-bg {
+    width: 140px;
+    height: 7px;
+    background: var(--border-subtle);
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.notion-progress-center .mini-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--primary);
+    border-radius: 999px;
+    transition: width 0.35s ease;
+}
+.notion-progress-center .progress-percent-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    letter-spacing: -0.01em;
+}
+
+.notion-progress-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+.mini-bar-bg {
+    width: 100px;
+    height: 5px;
+    background: var(--border-subtle);
+    border-radius: 999px;
+    overflow: hidden;
+}
+.mini-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--primary);
+    border-radius: 999px;
+    transition: width 0.35s ease;
+}
+
+/* ============================================================
+   NOTION BOARD VIEW (3 COLUMNS: Yapılacaklar, Devam Edenler, Tamamlandı)
+   ============================================================ */
+.kanban-board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(290px, 1fr));
+    gap: 20px;
+    flex: 1;
+    padding: 10px 40px 40px 40px;
+    overflow-x: auto;
+    align-items: start;
+}
+
+.kanban-col {
+    background: var(--bg-surface-subtle);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    min-height: 480px;
+    padding: 10px 10px 8px 10px;
+    transition: var(--transition);
+}
+
+.kanban-col.drag-over {
+    background: var(--primary-subtle);
+    outline: 1.5px dashed var(--primary);
+}
+
+/* Notion Column Header with Colored Pill */
+.col-header {
+    padding: 6px 6px 10px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.col-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notion-col-pill {
+    padding: 3px 8px;
+    border-radius: var(--radius-xs);
+    font-size: 12.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.pill-header-todo { background: var(--col-todo-bg); color: var(--col-todo-text); }
+.pill-header-progress { background: var(--col-progress-bg); color: var(--col-progress-text); }
+.pill-header-done { background: var(--col-done-bg); color: var(--col-done-text); }
+
+.col-count-num {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.col-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.col-quick-add-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: var(--transition);
+}
+.col-quick-add-btn:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-primary);
+}
+
+/* Cards Container */
+.cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 120px;
+}
+
+/* ============================================================
+   NOTION CARD COMPONENT
+   ============================================================ */
+.kanban-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    box-shadow: var(--shadow-card);
+    cursor: grab;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    transition: var(--transition);
+    user-select: none;
+}
+
+.kanban-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-1px);
+}
+
+.kanban-card:active { cursor: grabbing; }
+
+.kanban-card.dragging {
+    opacity: 0.45;
+    transform: scale(0.97);
+}
+
+/* Card Content & Checkbox */
+.card-content-area {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.notion-checkbox {
+    margin-top: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 1.5px solid var(--text-muted);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 9px;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+.notion-checkbox:hover {
+    border-color: var(--primary);
+    background: var(--primary-subtle);
+}
+.notion-checkbox.checked {
+    background: var(--col-done-text);
+    border-color: var(--col-done-text);
+    color: white;
+}
+
+.card-text {
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--text-primary);
+    word-break: break-word;
+    flex: 1;
+}
+
+.kanban-card.is-completed .card-text {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* Card Tags & Notion Pills */
+.card-properties-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.notion-tag-chip {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: var(--radius-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tag-tasarim { background: var(--tag-purple-bg); color: var(--tag-purple-text); }
+.tag-gelistirme { background: var(--tag-blue-bg); color: var(--tag-blue-text); }
+.tag-pazarlama { background: var(--tag-yellow-bg); color: var(--tag-yellow-text); }
+.tag-toplanti { background: var(--tag-red-bg); color: var(--tag-red-text); }
+.tag-kisisel { background: var(--tag-gray-bg); color: var(--tag-gray-text); }
+
+/* Priority Badge */
+.notion-priority-badge {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: var(--radius-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.prio-high { background: var(--tag-red-bg); color: var(--tag-red-text); }
+.prio-medium { background: var(--tag-yellow-bg); color: var(--tag-yellow-text); }
+.prio-low { background: var(--tag-green-bg); color: var(--tag-green-text); }
+
+/* Enhanced Card Date & Time Highlighting (Zaman Odaklı Kart Vurgusu) */
+.card-datetime-highlight {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 10px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 600;
+    margin: 5px 0 3px 0;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+/* Status: Today (Urgent Amber with Pulsing Indicator) */
+.card-datetime-highlight.status-today {
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+    border-color: rgba(245, 158, 11, 0.28);
+}
+[data-theme="dark"] .card-datetime-highlight.status-today {
+    background: rgba(245, 158, 11, 0.18);
+    color: #fbbf24;
+    border-color: rgba(245, 158, 11, 0.38);
+}
+
+/* Status: Tomorrow (Clean Blue) */
+.card-datetime-highlight.status-tomorrow {
+    background: rgba(59, 130, 246, 0.1);
+    color: #1d4ed8;
+    border-color: rgba(59, 130, 246, 0.25);
+}
+[data-theme="dark"] .card-datetime-highlight.status-tomorrow {
+    background: rgba(59, 130, 246, 0.18);
+    color: #60a5fa;
+    border-color: rgba(59, 130, 246, 0.38);
+}
+
+/* Status: Overdue (Warning Red) */
+.card-datetime-highlight.status-overdue {
+    background: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+    border-color: rgba(239, 68, 68, 0.28);
+}
+[data-theme="dark"] .card-datetime-highlight.status-overdue {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.38);
+}
+
+/* Status: Upcoming / Normal */
+.card-datetime-highlight.status-upcoming,
+.card-datetime-highlight.status-normal,
+.card-datetime-highlight.status-future {
+    background: var(--bg-surface-subtle);
+    color: var(--text-secondary);
+    border-color: var(--border-subtle);
+}
+
+.dt-badge-left {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.dt-badge-left i {
+    font-size: 12.5px;
+}
+.dt-time-val {
+    font-weight: 800;
+    font-family: 'Outfit', var(--font-heading);
+    font-size: 13.5px;
+    letter-spacing: -0.01em;
+}
+.dt-date-val {
+    opacity: 0.85;
+    font-size: 11px;
+    font-weight: 500;
+}
+.dt-relative-pill {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] .dt-relative-pill {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.card-add-time-btn {
+    background: transparent;
+    border: 1px dashed var(--border-subtle);
+    padding: 5px 9px;
+    border-radius: var(--radius-xs);
+    color: var(--text-muted);
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: var(--transition);
+    margin: 4px 0 2px 0;
+    width: fit-content;
+}
+.card-add-time-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-subtle);
+}
+
+/* Card Footer */
+.card-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.card-time-pill {
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+
+.card-actions-hover {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    opacity: 0.4;
+    transition: var(--transition);
+}
+.kanban-card:hover .card-actions-hover { opacity: 1; }
+
+.btn-card-icon {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11.5px;
+    transition: var(--transition);
+}
+.btn-card-icon:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-primary);
+}
+.btn-card-icon.delete:hover {
+    background: #ffe2dd;
+    color: #c43827;
+}
+
+/* Notion "+ Yeni" Bottom Button in Columns */
+.col-bottom-new-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 7px 10px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-xs);
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: var(--transition);
+}
+.col-bottom-new-btn:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-primary);
+}
+
+/* ============================================================
+   POST-IT WALL & STICKY NOTES STUDIO
+   Aesthetics: Textured Wall Canvas, Realistic 3D Pins & Paper Curl
+   ============================================================ */
+
+.postit-workspace {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 26px;
+    flex: 1;
+    padding: 10px 36px 32px 36px;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* ---------------- LEFT: POST-IT COMPOSER (PAD ON DESK) ---------------- */
+.postit-composer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+}
+
+.postit-pad-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pad-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.pad-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.pad-badge {
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--bg-surface-subtle);
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+}
+
+/* Color Palette Circles */
+.color-picker-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+.postit-color-palette {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.color-circle-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: rgba(0,0,0,0.6);
+}
+.color-circle-btn:hover {
+    transform: scale(1.15);
+}
+.color-circle-btn.active {
+    border-color: #37352f;
+    transform: scale(1.18);
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.15);
+}
+
+/* Post-it Note Paper in Composer */
+.postit-live-preview {
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+    position: relative;
+    transition: background 0.2s ease;
+    border-top: 8px solid rgba(0,0,0,0.06); /* Sticky glue tape strip */
+}
+
+/* Post-it Color Themes - Light Mode (Clean Notion Pastels) */
+.theme-yellow { background: #fff9b0 !important; color: #1e242b; border: 1px solid rgba(0,0,0,0.06); }
+.theme-pink   { background: #ffd2df !important; color: #1e242b; border: 1px solid rgba(0,0,0,0.06); }
+.theme-green  { background: #d3f8cb !important; color: #1e242b; border: 1px solid rgba(0,0,0,0.06); }
+.theme-blue   { background: #cfe9fc !important; color: #1e242b; border: 1px solid rgba(0,0,0,0.06); }
+.theme-purple { background: #f0dbfd !important; color: #1e242b; border: 1px solid rgba(0,0,0,0.06); }
+.theme-orange { background: #ffe6c7 !important; color: #1e242b; border: 1px solid rgba(0,0,0,0.06); }
+
+/* Post-it Color Themes - Dark Mode (Warm, Natural & High-Contrast Sticky Notes) */
+[data-theme="dark"] .theme-yellow {
+    background: #fde047 !important;
+    color: #1c1917 !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+}
+[data-theme="dark"] .theme-pink {
+    background: #f472b6 !important;
+    color: #1c1917 !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+}
+[data-theme="dark"] .theme-green {
+    background: #4ade80 !important;
+    color: #1c1917 !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+}
+[data-theme="dark"] .theme-blue {
+    background: #60a5fa !important;
+    color: #1c1917 !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+}
+[data-theme="dark"] .theme-purple {
+    background: #c084fc !important;
+    color: #1c1917 !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+}
+[data-theme="dark"] .theme-orange {
+    background: #fb923c !important;
+    color: #1c1917 !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Post-it Input Typography - Notion Style Bold & Clean */
+.postit-input-title {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed rgba(0,0,0,0.18);
+    padding-bottom: 6px;
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: inherit;
+    outline: none;
+    width: 100%;
+}
+.postit-input-title::placeholder {
+    color: inherit;
+    opacity: 0.45;
+}
+
+.postit-textarea-body {
+    background: transparent;
+    border: none;
+    resize: none;
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+    color: inherit;
+    outline: none;
+    min-height: 140px;
+    width: 100%;
+}
+.postit-textarea-body::placeholder {
+    color: inherit;
+    opacity: 0.45;
+}
+
+[data-theme="dark"] .postit-input-title {
+    border-bottom-color: rgba(0,0,0,0.22);
+}
+
+/* Stick To Wall Button */
+.btn-stick-wall {
+    background: var(--primary);
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: var(--radius-xs);
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    transition: var(--transition);
+}
+.btn-stick-wall:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+    filter: brightness(1.05);
+}
+.btn-stick-wall:active { transform: translateY(0); }
+
+/* ---------------- RIGHT: TEXTURED WALL CANVAS ---------------- */
+.postit-wall-col {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Light Mode Wall Frame (Classic Studio Wood & Cork Canvas) */
+.postit-wall-frame {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 10px solid #5a381e;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25), inset 0 0 20px rgba(0,0,0,0.35);
+    overflow: hidden;
+    position: relative;
+    background-color: #d1b48c;
+    background-image: 
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.28) 100%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.22'/%3E%3C/svg%3E");
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* DARK MODE WALL (Consistent Warm Dark Walnut Frame & Dark Cork Canvas) */
+[data-theme="dark"] .postit-wall-frame {
+    border: 10px solid #281d14;
+    border-radius: 14px;
+    background-color: #211c18;
+    background-image: 
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.45) 100%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.28'/%3E%3C/svg%3E");
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 0, 0, 0.65);
+}
+
+/* Wall Toolbar */
+.wall-toolbar {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 10;
+}
+.wall-title-text {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    letter-spacing: -0.015em;
+}
+.wall-count-pill {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.wall-actions-btns {
+    display: flex;
+    gap: 8px;
+}
+.btn-wall-action {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 5px 12px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-wall-action:hover {
+    background: rgba(255, 255, 255, 0.24);
+}
+
+/* The Canvas Grid Where Post-its Are Pinned */
+.postit-wall-canvas {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 26px;
+    align-content: start;
+    position: relative;
+}
+
+/* Empty Wall Notice */
+.empty-wall-banner {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    color: rgba(255, 255, 255, 0.65);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    gap: 12px;
+}
+.empty-wall-banner i { font-size: 44px; opacity: 0.8; }
+.empty-wall-banner span { font-size: 15px; font-weight: 700; font-family: var(--font-heading); }
+
+/* ---------------- THE REALISTIC POST-IT NOTE ON WALL ---------------- */
+.postit-note {
+    position: relative;
+    border-radius: var(--radius-sm);
+    padding: 20px 18px 14px 18px;
+    min-height: 190px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 
+        0 4px 8px rgba(0,0,0,0.14),
+        0 12px 24px -4px rgba(0,0,0,0.2);
+    transform: rotate(var(--rot, -1deg));
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+    user-select: none;
+    animation: stickToWallAnim 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes stickToWallAnim {
+    0% {
+        opacity: 0;
+        transform: scale(1.35) translateY(-50px) rotate(-6deg);
+        box-shadow: 0 30px 40px rgba(0,0,0,0.4);
+    }
+    65% {
+        transform: scale(0.96) translateY(4px) rotate(1deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0) rotate(var(--rot, -1deg));
+    }
+}
+
+.postit-note:hover {
+    transform: scale(1.05) rotate(0deg) !important;
+    box-shadow: 0 16px 32px rgba(0,0,0,0.35);
+    z-index: 50;
+}
+
+/* 3D Pushpin on Top of Sticky Note */
+.postit-pushpin {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ff4d4f 0%, #cf1322 75%, #5c0011 100%);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.45), inset 0 1px 2px rgba(255,255,255,0.7);
+    z-index: 10;
+}
+.postit-pushpin::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.7);
+}
+
+/* Metallic Brushed Chrome Pin in Dark Mode */
+[data-theme="dark"] .postit-pushpin {
+    background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cbd5e1 35%, #475569 80%, #0f172a 100%);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.65), inset 0 1px 2px rgba(255,255,255,0.9);
+}
+[data-theme="dark"] .postit-pushpin::after {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* Paper Curl Shadow Effect at Bottom Corner */
+.postit-note::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    width: 36px;
+    height: 18px;
+    box-shadow: 4px 6px 12px rgba(0,0,0,0.25);
+    transform: rotate(4deg);
+    z-index: -1;
+}
+
+.postit-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.postit-card-title {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: inherit;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+.postit-delete-btn {
+    background: transparent;
+    border: none;
+    color: inherit;
+    opacity: 0.35;
+    font-size: 12px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+.postit-delete-btn:hover {
+    background: rgba(0,0,0,0.1);
+    opacity: 1;
+    color: #ef4444;
+}
+
+.postit-card-body {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+    color: inherit;
+    opacity: 0.92;
+    word-break: break-word;
+    white-space: pre-wrap;
+    flex: 1;
+}
+
+.postit-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(0,0,0,0.14);
+}
+
+[data-theme="dark"] .postit-card-footer {
+    border-top-color: rgba(255,255,255,0.14);
+}
+
+.postit-date-badge {
+    font-size: 11px;
+    color: inherit;
+    opacity: 0.55;
+    font-weight: 500;
+}
+
+.postit-quick-edit-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.45;
+    cursor: pointer;
+    font-size: 11.5px;
+    padding: 2px 6px;
+    border-radius: var(--radius-xs);
+    transition: var(--transition);
+}
+.postit-quick-edit-btn:hover {
+    background: rgba(0,0,0,0.08);
+    opacity: 1;
+}
+
+[data-theme="dark"] .postit-quick-edit-btn:hover {
+    background: rgba(255,255,255,0.12);
+}
+
+
+/* Responsive */
+@media (max-width: 900px) {
+    .postit-workspace {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+    }
+    .postit-wall-canvas {
+        min-height: 360px;
+    }
+}
+
+
+/* ============================================================
+   MODALS (Notion Clean Popup)
+   ============================================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 15, 15, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-pro {
+    background: var(--bg-surface);
+    width: 500px;
+    max-width: 92vw;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-dropdown);
+    overflow: hidden;
+    animation: authPop 0.18s ease;
+}
+
+.modal-header-pro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.modal-title-pro {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 15px;
+    cursor: pointer;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+.modal-close-btn:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-primary);
+}
+
+.modal-body-pro {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.form-label-pro {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.form-input-pro, .form-select-pro {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    outline: none;
+    transition: var(--transition);
+}
+.form-input-pro:focus, .form-select-pro:focus {
+    border-color: var(--border-focus);
+}
+
+.priority-selector-group {
+    display: flex;
+    gap: 6px;
+}
+.prio-btn-option {
+    flex: 1;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-subtle);
+    padding: 6px 10px;
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: var(--transition);
+    color: var(--text-secondary);
+}
+.prio-btn-option.active.high {
+    background: var(--tag-red-bg);
+    color: var(--tag-red-text);
+    border-color: transparent;
+    font-weight: 600;
+}
+.prio-btn-option.active.medium {
+    background: var(--tag-yellow-bg);
+    color: var(--tag-yellow-text);
+    border-color: transparent;
+    font-weight: 600;
+}
+.prio-btn-option.active.low {
+    background: var(--tag-green-bg);
+    color: var(--tag-green-text);
+    border-color: transparent;
+    font-weight: 600;
+}
+
+/* ============================================================
+   HIGHLIGHTED DATE & TIME BUILDER PANEL (Modal)
+   ============================================================ */
+.modal-datetime-builder-card {
+    background: #f8fafc;
+    border: 1.5px solid #dbeafe;
+    border-radius: var(--radius-sm);
+    padding: 13px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .modal-datetime-builder-card {
+    background: rgba(35, 131, 226, 0.08);
+    border-color: rgba(82, 156, 202, 0.35);
+}
+
+.dt-builder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 2px;
+}
+
+.dt-builder-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.required-pulse-pill {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(35, 131, 226, 0.12);
+    color: var(--primary);
+    border: 1px solid rgba(35, 131, 226, 0.25);
+}
+
+.dt-builder-preview-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #2383e2;
+    color: #ffffff;
+    box-shadow: 0 1px 4px rgba(35, 131, 226, 0.28);
+    font-family: 'Outfit', var(--font-heading);
+    letter-spacing: 0.01em;
+}
+
+.dt-presets-group,
+.dt-hours-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dt-presets-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.dt-presets-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.dt-preset-btn {
+    flex: 1;
+    padding: 6px 8px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    border-radius: var(--radius-xs);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.dt-preset-btn:hover {
+    background: var(--bg-surface-hover);
+    color: var(--text-primary);
+    border-color: var(--border-medium);
+}
+
+.dt-preset-btn.active {
+    background: #2383e2;
+    color: #ffffff;
+    border-color: #2383e2;
+    box-shadow: 0 1px 4px rgba(35, 131, 226, 0.25);
+}
+
+.dt-hours-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.dt-hour-chip {
+    padding: 4px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Outfit', var(--font-heading);
+}
+
+.dt-hour-chip:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-subtle);
+}
+
+.dt-hour-chip.active {
+    background: #2383e2;
+    color: #ffffff;
+    border-color: #2383e2;
+}
+
+.form-sublabel {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    display: block;
+}
+
+.dt-custom-input {
+    font-weight: 600;
+    font-size: 12.5px;
+    font-family: 'Outfit', var(--font-sans);
+}
+
+.modal-footer-pro {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 20px;
+    background: var(--bg-surface-subtle);
+    border-top: 1px solid var(--border-subtle);
+}
+
+/* Floating Toast */
+.toast-floating-pro {
+    position: fixed;
+    bottom: 20px;
+    right: 24px;
+    background: #2f2f2f;
+    color: #ffffff;
+    padding: 10px 16px;
+    border-radius: var(--radius-xs);
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: var(--shadow-dropdown);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 9999;
+}
+.toast-floating-pro.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+.toast-icon { color: #6bc987; }
+
+/* Responsive */
+@media (max-width: 990px) {
+    .kanban-board {
+        grid-template-columns: 1fr;
+    }
+    .notion-page-header {
+        padding: 20px 20px 10px 20px;
+    }
+    .kanban-board {
+        padding: 10px 20px 30px 20px;
+    }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol - Todo</title>
+    <link rel="stylesheet" href="../style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="auth-wrapper" style="position: relative; min-height: 100vh;">
+        <div class="auth-ambient-orb orb-1"></div>
+        <div class="auth-ambient-orb orb-2"></div>
+
+        <div class="auth-card">
+            <!-- Brand Header -->
+            <div class="auth-header">
+                <div class="notion-icon-badge">🎯</div>
+                <h2 class="auth-brand-name">Todo</h2>
+                <p class="auth-subtitle">Notion tarzı ücretsiz çalışma alanınızı oluşturun.</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="auth-tabs">
+                <a href="login.html" class="auth-tab" style="text-decoration: none;">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Giriş Yap
+                </a>
+                <a href="register.html" class="auth-tab active" style="text-decoration: none;">
+                    <i class="fa-solid fa-user-plus"></i> Hesap Oluştur
+                </a>
+            </div>
+
+            <!-- Auth Form -->
+            <form id="pageRegisterForm" class="auth-form" onsubmit="handleStandaloneRegister(event)">
+                <div class="form-field">
+                    <label for="pageRegName">Adınız ve Soyadınız</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="pageRegName" class="auth-input" placeholder="Örn: Fatime Yılmaz" required>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="pageRegEmail">E-posta</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                        <input type="email" id="pageRegEmail" class="auth-input" placeholder="adiniz@sirket.com" required>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="pageRegPassword">Şifre</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="pageRegPassword" class="auth-input" placeholder="En az 6 karakter" minlength="6" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth-submit">
+                    <span>Hesap Oluştur ve Başla</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="auth-guest-link">
+                Zaten hesabınız var mı? <a href="login.html">Giriş Yapın</a> veya <a href="../index.html">Panoya Dön</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleStandaloneRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('pageRegName').value.trim();
+            const email = document.getElementById('pageRegEmail').value.trim();
+            const user = {
+                id: 'usr_' + Date.now(),
+                name: name,
+                email: email,
+                avatar: name.charAt(0).toUpperCase()
+            };
+            localStorage.setItem('todo_user', JSON.stringify(user));
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+</html>

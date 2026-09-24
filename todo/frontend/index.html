@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Caveat:wght@600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         1. NOTION-STYLE AUTH / LOGIN SCREEN
+         ============================================================ -->
+    <div id="authScreen" class="auth-wrapper">
+        <div class="auth-ambient-orb orb-1"></div>
+        <div class="auth-ambient-orb orb-2"></div>
+
+        <div class="auth-card">
+            <!-- Brand Header -->
+            <div class="auth-header">
+                <h2 class="auth-brand-name">Todo</h2>
+                <p class="auth-subtitle" id="authSubtitle">Düşüncelerinizi, görevlerinizi ve projelerinizi düzenleyin.</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="auth-tabs" id="authTabsWrapper">
+                <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Giriş Yap
+                </button>
+                <button type="button" class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">
+                    <i class="fa-solid fa-user-plus"></i> Hesap Oluştur
+                </button>
+            </div>
+
+            <!-- Auth Form -->
+            <form id="authForm" class="auth-form" onsubmit="handleAuthSubmit(event)">
+                <!-- Name field (shown on register) -->
+                <div class="form-field hidden" id="fieldNameWrapper">
+                    <label for="authName">Adınız ve Soyadınız</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="authName" class="auth-input" placeholder="Adınız ve Soyadınız">
+                    </div>
+                </div>
+
+                <!-- Email Field (Silinik placeholder, no hardcoded prefilled value) -->
+                <div class="form-field">
+                    <label for="authEmail">E-posta Adresi</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                        <input type="email" id="authEmail" class="auth-input" placeholder="adiniz@sirket.com" required autocomplete="email">
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-field">
+                    <label for="authPassword">Şifre</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="input-eye-btn" onclick="togglePasswordVisibility('authPassword', this)">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-auth-submit" id="btnAuthSubmit">
+                    <span>Giriş Yap ve Başla</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+                <!-- Şifremi Unuttum (Alta alındı, tıklandığında e-posta ile kurtarma açılır) -->
+                <div class="auth-forgot-wrapper" id="authForgotWrapper">
+                    <button type="button" class="btn-forgot-password-link" onclick="openEmailRecovery()">
+                        <i class="fa-solid fa-key" style="font-size: 11px;"></i> Şifremi Unuttum
+                    </button>
+                </div>
+            </form>
+
+            <!-- Email Password Recovery Panel (Şifremi Unuttum tıklandığında açılır, e-postayı bağlar) -->
+            <div id="emailRecoveryPanel" class="phone-recovery-panel hidden">
+                <div class="recovery-header">
+                    <button type="button" class="btn-recovery-back" onclick="closeEmailRecovery()" title="Girişe Dön">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h3 class="recovery-title">Şifremi Sıfırla</h3>
+                        <p class="recovery-desc" id="recoveryDesc">E-posta adresinize 6 haneli doğrulama kodu göndereceğiz.</p>
+                    </div>
+                </div>
+
+                <!-- Adım 1: E-posta ile Kod İsteme -->
+                <form id="emailRecoveryForm" class="auth-form" onsubmit="handleSendRecoveryCode(event)">
+                    <div id="recoveryEmailStep">
+                        <div class="form-field">
+                            <label for="recoveryEmail">E-posta Adresi</label>
+                            <div class="input-icon-wrap">
+                                <i class="fa-solid fa-envelope input-icon"></i>
+                                <input type="email" id="recoveryEmail" class="auth-input" placeholder="adiniz@sirket.com" required autocomplete="email">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-auth-submit" id="btnSendCode">
+                            <span>Doğrulama Kodu Gönder</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+
+                    <!-- Adım 2: Gelen Kodu ve Yeni Şifreyi Girme -->
+                    <div id="recoveryCodeStep" class="hidden">
+                        <div class="recovery-code-info" style="margin-bottom: 12px; padding: 10px 12px; background: rgba(35, 131, 226, 0.08); border: 1px solid rgba(35, 131, 226, 0.2); border-radius: 6px; font-size: 12px; color: var(--primary);">
+                            <i class="fa-solid fa-circle-check"></i> E-postanıza 6 haneli doğrulama kodu gönderildi!
+                        </div>
+
+                        <div class="form-field">
+                            <label for="recoveryCodeInput">Doğrulama Kodu</label>
+                            <div class="input-icon-wrap">
+                                <i class="fa-solid fa-shield-halved input-icon"></i>
+                                <input type="text" id="recoveryCodeInput" class="auth-input" placeholder="6 Haneli Kod" maxlength="6">
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="recoveryNewPassword">Yeni Şifre</label>
+                            <div class="input-icon-wrap">
+                                <i class="fa-solid fa-lock input-icon"></i>
+                                <input type="password" id="recoveryNewPassword" class="auth-input" placeholder="Yeni şifrenizi girin">
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-auth-submit" onclick="handleVerifyAndResetPassword()">
+                            <span>Şifremi Güncelle ve Giriş Yap</span>
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 12px;">
+                        <button type="button" class="btn-forgot-password-link" onclick="closeEmailRecovery()">
+                            ← Giriş Ekranına Dön
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="auth-guest-link">
+                Hesap oluşturmak istemiyor musunuz? 
+                <a onclick="guestLogin()">Misafir olarak devam et</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         2. MAIN NOTION WORKSPACE (Shown When Authenticated)
+         ============================================================ -->
+    <div id="mainApp" class="hidden">
+        
+        <!-- TOP NAVBAR (Notion Breadcrumbs & Tools) -->
+        <nav class="top-navbar">
+            <div class="nav-left">
+                <!-- Notion Breadcrumb -->
+                <div class="notion-breadcrumbs">
+                    <div class="crumb-workspace" onclick="switchView('view-board')">
+                        <span>Çalışma Alanı</span>
+                    </div>
+                    <span class="crumb-separator">/</span>
+                    <div class="crumb-page">
+                        <span>Todo</span>
+                    </div>
+                </div>
+
+                <!-- Nav View Tabs -->
+                <div class="nav-tabs">
+                    <button class="nav-tab-item active" id="nav-board" onclick="switchView('view-board', this)">
+                        <i class="fa-solid fa-table-columns"></i> Pano Görünümü
+                    </button>
+                    <button class="nav-tab-item" id="nav-notes" onclick="switchView('view-notes', this)">
+                        <i class="fa-regular fa-file-lines"></i> Kişisel Notlar
+                    </button>
+                </div>
+            </div>
+
+            <div class="nav-right">
+                <!-- Search Input -->
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass search-icon-nav"></i>
+                    <input type="text" id="liveSearchInput" class="search-input-nav" placeholder="Todo ara...">
+                </div>
+
+                <!-- Theme Switcher (Dark/Light) -->
+                <button type="button" class="theme-toggle-btn" id="btnThemeToggle" onclick="toggleTheme()" title="Karanlık / Aydınlık Mod">
+                    <i class="fa-solid fa-moon" id="themeIcon"></i>
+                </button>
+
+                <!-- New Task Button -->
+                <button type="button" class="btn-notion-primary" onclick="openNewTaskModal('todo')">
+                    <i class="fa-solid fa-plus"></i> Yeni
+                </button>
+
+                <!-- User Profile & Dropdown -->
+                <div class="user-menu-wrapper">
+                    <button type="button" class="user-profile-btn" onclick="toggleUserDropdown(event)">
+                        <div class="user-avatar-mini" id="navUserAvatar">F</div>
+                        <span class="user-name-label" id="navUserName">Kullanıcı</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 9px; color: var(--text-muted);"></i>
+                    </button>
+
+                    <div class="user-dropdown-menu hidden" id="userDropdownMenu">
+                        <div class="dropdown-user-info">
+                            <div class="dropdown-name" id="dropdownUserName">Fatime Yılmaz</div>
+                            <div class="dropdown-email" id="dropdownUserEmail">fatime@todo.app</div>
+                        </div>
+                        <button type="button" class="dropdown-item" onclick="toggleTheme()">
+                            <i class="fa-solid fa-circle-half-stroke"></i> Tema Değiştir
+                        </button>
+                        <button type="button" class="dropdown-item" onclick="resetSampleData()">
+                            <i class="fa-solid fa-rotate-right"></i> Örnek Verileri Yükle
+                        </button>
+                        <button type="button" class="dropdown-item danger" onclick="logoutUser()">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Çıkış Yap
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTAINER -->
+        <main class="app-container">
+            
+            <!-- 1. NOTION BOARD VIEW -->
+            <div id="view-board" class="view-section active">
+                
+                <!-- Centered Notion Page Header (Time & Date Focused) -->
+                <div class="notion-page-header centered-header">
+                    <div class="notion-icon-and-title">
+                        <!-- Digital Clock with Sleeping Cat on Top (Pano Saati & Uyuyan Kedi) -->
+                        <div class="digital-cat-clock-container" id="digitalCatClockContainer">
+                            <!-- Sleeping Cat on Clock with Dynamic Stress / Mood Expressions -->
+                            <div class="sleeping-cat-wrapper" onclick="petTheCat(event)" title="Kedi - Ruh halini görmek için tıkla 🐾">
+                                <!-- Floating animated Zzz or Stress Sweat bubbles -->
+                                <div class="cat-zzz-float" id="catFloatSymbols">
+                                    <span class="z-particle z-1">z</span>
+                                    <span class="z-particle z-2">z</span>
+                                    <span class="z-particle z-3">Z</span>
+                                </div>
+
+                                <!-- Sleeping Cat Figure with mood states -->
+                                <div class="sleeping-cat-figure mood-focused" id="catFigure">
+                                    <!-- Stress Sweat Drop (Appears when stressed / low completion %) -->
+                                    <div class="cat-sweat-drop" id="catSweatDrop">💧</div>
+
+                                    <div class="cat-tail-dangle" id="catTail"></div>
+                                    <div class="cat-body-sphere">
+                                        <div class="cat-stripes">
+                                            <span></span><span></span>
+                                        </div>
+                                    </div>
+                                    <div class="cat-head-sphere">
+                                        <div class="cat-ear ear-left"><div class="ear-inner"></div></div>
+                                        <div class="cat-ear ear-right"><div class="ear-inner"></div></div>
+                                        <div class="cat-face-features">
+                                            <!-- Eyebrows for stress / happy expressions -->
+                                            <div class="cat-eyebrows" id="catEyebrows">
+                                                <div class="cat-eyebrow left"></div>
+                                                <div class="cat-eyebrow right"></div>
+                                            </div>
+                                            <div class="cat-closed-eye left" id="catEyeLeft"></div>
+                                            <div class="cat-closed-eye right" id="catEyeRight"></div>
+                                            <!-- Happy blush cheeks -->
+                                            <div class="cat-blush left"></div>
+                                            <div class="cat-blush right"></div>
+                                            <div class="cat-pink-nose"></div>
+                                            <div class="cat-mouth-shape" id="catMouthShape"></div>
+                                            <div class="cat-whiskers-left">
+                                                <span class="w-line"></span><span class="w-line"></span>
+                                            </div>
+                                            <div class="cat-whiskers-right">
+                                                <span class="w-line"></span><span class="w-line"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="cat-paws-front">
+                                        <div class="cat-paw-tucked"></div>
+                                        <div class="cat-paw-tucked"></div>
+                                    </div>
+                                    <!-- Interactive Purr / Mood Balloon -->
+                                    <div class="cat-purr-balloon" id="catPurrBalloon">
+                                        <span>mırrr... 💤🐾</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Retro-Modern Digital Clock Base (Transparent Background) -->
+                            <div class="cat-digital-clock-base">
+                                <div class="clock-casing">
+                                    <div class="clock-display-screen">
+                                        <div class="clock-top-indicators">
+                                            <div class="clock-led-status">
+                                                <span class="live-dot-pulse"></span>
+                                                <span class="clock-mode-label">CANLI SAAT</span>
+                                            </div>
+                                            <div class="clock-day-label" id="clockDayName">ÇARŞAMBA</div>
+                                        </div>
+
+                                        <div class="clock-time-display">
+                                            <span id="liveClockTime" class="clock-digits-main">17:45:00</span>
+                                        </div>
+
+                                        <div class="clock-bottom-indicators">
+                                            <span id="liveClockDate" class="clock-date-text">24 Eylül 2026</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Centered Dynamic Progress (Tamamlanma Yüzdesi Ortada) -->
+                        <div class="notion-stats-bar centered-stats">
+                            <div class="notion-progress-center">
+                                <div class="mini-bar-bg">
+                                    <div class="mini-bar-fill" id="progressBarFill"></div>
+                                </div>
+                                <span id="progressPercentageText" class="progress-percent-label">%0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notion Filter & Controls Bar -->
+                    <div class="notion-controls-row">
+                        <div class="notion-filter-group">
+                            <button class="notion-filter-btn active" id="filter-all" onclick="setFilter('all', this)">
+                                <i class="fa-solid fa-list-ul"></i> Tümü
+                            </button>
+                            <button class="notion-filter-btn" id="filter-today" onclick="setFilter('today', this)">
+                                <i class="fa-solid fa-clock" style="color: #d97706;"></i> Bugünün İşleri
+                            </button>
+                            <button class="notion-filter-btn" id="filter-tomorrow" onclick="setFilter('tomorrow', this)">
+                                <i class="fa-regular fa-calendar-check" style="color: #2563eb;"></i> Yarın
+                            </button>
+                            <button class="notion-filter-btn" id="filter-high" onclick="setFilter('high', this)">
+                                <i class="fa-solid fa-fire" style="color: #c43827;"></i> Yüksek Öncelik
+                            </button>
+                        </div>
+
+                        <div>
+                            <button class="notion-filter-btn" onclick="toggleSort()">
+                                <i class="fa-solid fa-arrow-down-a-z"></i>
+                                <span id="sort-text">Saat / Tarihe Göre</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- 3 Columns Notion Kanban Board -->
+                <div class="kanban-board" id="kanbanBoard">
+                    
+                    <!-- Sütun 1: Yapılacaklar -->
+                    <div class="kanban-col" data-status="todo" id="col-todo">
+                        <div class="col-header">
+                            <div class="col-header-left">
+                                <span class="notion-col-pill pill-header-todo">📌 Yapılacaklar</span>
+                                <span class="col-count-num" id="count-todo">0</span>
+                            </div>
+                            <div class="col-header-actions">
+                                <button type="button" class="col-quick-add-btn" onclick="openNewTaskModal('todo')" title="Yeni görev ekle">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="cards-container" id="cards-todo"></div>
+                        <button type="button" class="col-bottom-new-btn" onclick="openNewTaskModal('todo')">
+                            <i class="fa-solid fa-plus"></i> Yeni
+                        </button>
+                    </div>
+
+                    <!-- Sütun 2: Devam Edenler -->
+                    <div class="kanban-col" data-status="progress" id="col-progress">
+                        <div class="col-header">
+                            <div class="col-header-left">
+                                <span class="notion-col-pill pill-header-progress">⚡ Devam Edenler</span>
+                                <span class="col-count-num" id="count-progress">0</span>
+                            </div>
+                            <div class="col-header-actions">
+                                <button type="button" class="col-quick-add-btn" onclick="openNewTaskModal('progress')" title="Yeni görev ekle">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="cards-container" id="cards-progress"></div>
+                        <button type="button" class="col-bottom-new-btn" onclick="openNewTaskModal('progress')">
+                            <i class="fa-solid fa-plus"></i> Yeni
+                        </button>
+                    </div>
+
+                    <!-- Sütun 3: Tamamlandı -->
+                    <div class="kanban-col" data-status="done" id="col-done">
+                        <div class="col-header">
+                            <div class="col-header-left">
+                                <span class="notion-col-pill pill-header-done">✅ Tamamlandı</span>
+                                <span class="col-count-num" id="count-done">0</span>
+                            </div>
+                            <div class="col-header-actions">
+                                <button type="button" class="col-quick-add-btn" onclick="openNewTaskModal('done')" title="Yeni görev ekle">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="cards-container" id="cards-done"></div>
+                        <button type="button" class="col-bottom-new-btn" onclick="openNewTaskModal('done')">
+                            <i class="fa-solid fa-plus"></i> Yeni
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 2. POST-IT STICKY NOTES & TEXTURED WALL VIEW -->
+            <div id="view-notes" class="view-section hidden">
+                <div class="postit-workspace">
+                    
+                    <!-- Sol Taraf: Post-it Not Yazma Pedi -->
+                    <div class="postit-composer-col">
+                        <div class="postit-pad-card">
+                            <div class="pad-header">
+                                <div class="pad-title">
+                                    <span>📝</span>
+                                    <span>Post-it Not Yaz</span>
+                                </div>
+                                <span class="pad-badge" id="notesWallCountBadge">Duvarda: 0</span>
+                            </div>
+
+                            <!-- Renk Seçimi Paleti -->
+                            <div>
+                                <div class="color-picker-label">Post-it Rengi:</div>
+                                <div class="postit-color-palette">
+                                    <button type="button" class="color-circle-btn active theme-yellow" data-color="yellow" onclick="selectPostitColor('yellow', this)" title="Sarı">✓</button>
+                                    <button type="button" class="color-circle-btn theme-pink" data-color="pink" onclick="selectPostitColor('pink', this)" title="Pembe"></button>
+                                    <button type="button" class="color-circle-btn theme-green" data-color="green" onclick="selectPostitColor('green', this)" title="Yeşil"></button>
+                                    <button type="button" class="color-circle-btn theme-blue" data-color="blue" onclick="selectPostitColor('blue', this)" title="Mavi"></button>
+                                    <button type="button" class="color-circle-btn theme-purple" data-color="purple" onclick="selectPostitColor('purple', this)" title="Mor"></button>
+                                    <button type="button" class="color-circle-btn theme-orange" data-color="orange" onclick="selectPostitColor('orange', this)" title="Turuncu"></button>
+                                </div>
+                            </div>
+
+                            <!-- Post-it Not Kağıdı -->
+                            <div class="postit-live-preview theme-yellow" id="composerPreviewPad">
+                                <input type="text" id="postitTitleInput" class="postit-input-title" placeholder="Başlık (Örn: Sprint Planı)...">
+                                <textarea id="postitBodyInput" class="postit-textarea-body" placeholder="Fikir, hatırlatma veya yapılacak notlarınızı buraya yazın..."></textarea>
+                            </div>
+
+                            <!-- Duvara Yapıştır Butonu -->
+                            <button type="button" class="btn-stick-wall" onclick="stickCurrentNoteToWall()">
+                                <i class="fa-solid fa-thumbtack"></i> Duvara Yapıştır
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sağ Taraf: Dokulu Duvar Panosu (Wall Canvas) -->
+                    <div class="postit-wall-col">
+                        <div class="postit-wall-frame">
+                            <!-- Duvar Üst Çubuğu -->
+                            <div class="wall-toolbar">
+                                <div class="wall-title-text">
+                                    <i class="fa-solid fa-thumbtack" style="color: #ff4d4f;"></i>
+                                    <span>Not Duvarı</span>
+                                    <span class="wall-count-pill" id="wallCountPill">0 Not</span>
+                                </div>
+                                <div class="wall-actions-btns">
+                                    <button type="button" class="btn-wall-action" onclick="shufflePostitTilts()" title="Notların eğimini rastgele değiştir">
+                                        <i class="fa-solid fa-arrows-rotate"></i> Eğimleri Değiştir
+                                    </button>
+                                    <button type="button" class="btn-wall-action" onclick="clearAllPostits()" title="Duvardaki tüm post-itleri temizle">
+                                        <i class="fa-regular fa-trash-can"></i> Temizle
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Post-itlerin Yapıştırıldığı Duvar Alanı -->
+                            <div class="postit-wall-canvas" id="postitWallCanvas">
+                                <!-- app.js tarafından dinamik olarak doldurulur -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ============================================================
+         3. NEW / EDIT TASK MODAL
+         ============================================================ -->
+    <div id="taskModal" class="modal-overlay hidden" onclick="handleModalBackdropClick(event)">
+        <div class="modal-pro" onclick="event.stopPropagation()">
+            <div class="modal-header-pro">
+                <div class="modal-title-pro">
+                    <span>📋</span>
+                    <span id="modalHeading">Yeni Görev</span>
+                </div>
+                <button type="button" class="modal-close-btn" onclick="closeModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="newTaskForm" onsubmit="handleTaskFormSubmit(event)">
+                <input type="hidden" id="editingTaskId" value="">
+                
+                <div class="modal-body-pro">
+                    <!-- Task Title -->
+                    <div>
+                        <label class="form-label-pro" for="taskTitle">Görev Başlığı</label>
+                        <input type="text" id="taskTitle" class="form-input-pro" placeholder="Örn: Tasarım revizyonu yap" required>
+                    </div>
+
+                    <!-- Column Status & Tag Grid -->
+                    <div class="modal-row-grid">
+                        <div>
+                            <label class="form-label-pro" for="taskStatus">Sütun (Durum)</label>
+                            <select id="taskStatus" class="form-select-pro">
+                                <option value="todo">📌 Yapılacaklar</option>
+                                <option value="progress">⚡ Devam Edenler</option>
+                                <option value="done">✅ Tamamlandı</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label-pro" for="taskTag">Etiket</label>
+                            <select id="taskTag" class="form-select-pro">
+                                <option value="Tasarım">🎨 Tasarım</option>
+                                <option value="Geliştirme">💻 Geliştirme</option>
+                                <option value="Pazarlama">📈 Pazarlama</option>
+                                <option value="Toplantı">📅 Toplantı</option>
+                                <option value="Kişisel">📝 Kişisel</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Priority Selection -->
+                    <div>
+                        <label class="form-label-pro">Öncelik</label>
+                        <div class="priority-selector-group">
+                            <button type="button" class="prio-btn-option low" data-prio="low" onclick="selectPriority('low')">
+                                Düşük
+                            </button>
+                            <button type="button" class="prio-btn-option active medium" data-prio="medium" onclick="selectPriority('medium')">
+                                Orta
+                            </button>
+                            <button type="button" class="prio-btn-option high" data-prio="high" onclick="selectPriority('high')">
+                                Yüksek
+                            </button>
+                        </div>
+                        <input type="hidden" id="taskPriority" value="medium">
+                    </div>
+
+                    <!-- Highlighted Date & Time Builder Panel -->
+                    <div class="modal-datetime-builder-card">
+                        <div class="dt-builder-header">
+                            <div class="dt-builder-title">
+                                <i class="fa-solid fa-clock" style="color: var(--primary);"></i>
+                                <span>Tarih & Saat Belirle</span>
+                                <span class="required-pulse-pill">Vurgulu</span>
+                            </div>
+                            <div class="dt-builder-preview-pill" id="dtModalPreviewBadge">
+                                <i class="fa-regular fa-calendar-check"></i>
+                                <span id="dtModalPreviewText">Bugün 18:00</span>
+                            </div>
+                        </div>
+
+                        <!-- Quick Day Presets -->
+                        <div class="dt-presets-group">
+                            <span class="dt-presets-label">Hızlı Tarih:</span>
+                            <div class="dt-presets-buttons">
+                                <button type="button" class="dt-preset-btn active" id="btnPresetToday" onclick="applyDatePreset('today')">
+                                    🔥 Bugün
+                                </button>
+                                <button type="button" class="dt-preset-btn" id="btnPresetTomorrow" onclick="applyDatePreset('tomorrow')">
+                                    📌 Yarın
+                                </button>
+                                <button type="button" class="dt-preset-btn" id="btnPresetNextWeek" onclick="applyDatePreset('nextweek')">
+                                    📆 Pazartesi
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Hour Chips -->
+                        <div class="dt-hours-group">
+                            <span class="dt-presets-label">Hızlı Saat:</span>
+                            <div class="dt-hours-chips">
+                                <button type="button" class="dt-hour-chip" onclick="applyHourPreset('09:00')">09:00 Sabah</button>
+                                <button type="button" class="dt-hour-chip" onclick="applyHourPreset('13:00')">13:00 Öğlen</button>
+                                <button type="button" class="dt-hour-chip" onclick="applyHourPreset('15:30')">15:30 İkindi</button>
+                                <button type="button" class="dt-hour-chip active" onclick="applyHourPreset('18:00')">18:00 Akşam</button>
+                                <button type="button" class="dt-hour-chip" onclick="applyHourPreset('21:00')">21:00 Gece</button>
+                            </div>
+                        </div>
+
+                        <!-- Exact datetime-local input -->
+                        <div>
+                            <label class="form-sublabel" for="taskTime">Özel Tarih & Saat:</label>
+                            <input type="datetime-local" id="taskTime" class="form-input-pro dt-custom-input" onchange="onCustomDateTimeChange(this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer-pro">
+                    <button type="button" class="notion-filter-btn" onclick="closeModal()">Vazgeç</button>
+                    <button type="submit" class="btn-notion-primary">
+                        <i class="fa-solid fa-check"></i> Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         4. FLOATING TOAST NOTIFICATION
+         ============================================================ -->
+    <div id="floatingToast" class="toast-floating-pro">
+        <i class="fa-solid fa-check toast-icon"></i>
+        <span id="toastMessage">İşlem başarıyla gerçekleştirildi.</span>
+    </div>
+
+    <!-- Supabase JS SDK & Configuration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
