@@ -37,15 +37,179 @@ document.addEventListener('DOMContentLoaded', () => {
     setupGlobalClickListeners();
     startLiveBoardClock();
 });
+// ============================================================
+// AUTHENTICATION & SESSION MANAGEMENT (MANDATORY REGISTRATION)
+// ============================================================
+function getRegisteredUsers() {
+    try {
+        const raw = safeStorage.get('todo_registered_users');
+        return raw ? JSON.parse(raw) : {};
+    } catch(e) {
+        return {};
+    }
+}
 
-// ============================================================
-// AUTHENTICATION & SESSION MANAGEMENT
-// ============================================================
+function saveRegisteredUsers(users) {
+    safeStorage.set('todo_registered_users', JSON.stringify(users));
+}
+
+function showAuthAlert(msg, type = 'error') {
+    const alertBox = document.getElementById('authAlert');
+    if (alertBox) {
+        alertBox.className = `auth-alert ${type}`;
+        alertBox.innerHTML = type === 'error'
+            ? `<i class="fa-solid fa-circle-exclamation"></i> <span>${msg}</span>`
+            : `<i class="fa-solid fa-circle-check"></i> <span>${msg}</span>`;
+        alertBox.classList.remove('hidden');
+    }
+    showToast(msg);
+}
+
+function hideAuthAlert() {
+    const alertBox = document.getElementById('authAlert');
+    if (alertBox) {
+        alertBox.className = 'auth-alert hidden';
+        alertBox.textContent = '';
+    }
+}
+
+async function findUserAccount(email) {
+    if (!email) return null;
+    const normalized = email.trim().toLowerCase();
+    const localUsers = getRegisteredUsers();
+
+    // 1. Check local users
+    if (localUsers[normalized]) {
+        return localUsers[normalized];
+    }
+
+    // 2. Check Supabase cloud database
+    if (supabaseClient) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('tasks')
+                .select('*')
+                .eq('id', '__user__' + normalized)
+                .single();
+
+            if (!error && data) {
+                let password = '';
+                try {
+                    password = decodeURIComponent(atob(data.priority));
+                } catch(e) {
+                    password = data.priority || '';
+                }
+                const account = {
+                    id: data.id,
+                    name: data.title || normalized.split('@')[0],
+                    email: normalized,
+                    password: password,
+                    createdAt: data.created_at
+                };
+                localUsers[normalized] = account;
+                saveRegisteredUsers(localUsers);
+                return account;
+            }
+        } catch(err) {
+            console.warn('[Supabase User Lookup]:', err);
+        }
+    }
+    return null;
+}
+
+async function registerNewUserAccount(name, email, password) {
+    const normalized = email.trim().toLowerCase();
+    const existing = await findUserAccount(normalized);
+    if (existing) {
+        return {
+            success: false,
+            message: 'Bu e-posta adresiyle zaten kayıtlı bir hesap var! Lütfen "Giriş Yap" sekmesini kullanın.'
+        };
+    }
+
+    const newUser = {
+        id: 'usr_' + Date.now(),
+        name: name.trim() || normalized.split('@')[0],
+        email: normalized,
+        password: password,
+        createdAt: new Date().toISOString()
+    };
+
+    // 1. Yerel hafızaya kaydet
+    const localUsers = getRegisteredUsers();
+    localUsers[normalized] = newUser;
+    saveRegisteredUsers(localUsers);
+
+    // 2. Buluta (Supabase) güvenle kaydet
+    if (supabaseClient) {
+        try {
+            let encodedPassword = '';
+            try {
+                encodedPassword = btoa(encodeURIComponent(password));
+            } catch(e) {
+                encodedPassword = password;
+            }
+            await supabaseClient.from('tasks').upsert({
+                id: '__user__' + normalized,
+                title: newUser.name,
+                user_email: normalized,
+                tag: '__SYSTEM_USER__',
+                status: 'registered',
+                priority: encodedPassword,
+                time: null,
+                reminder_sent: false
+            });
+        } catch(err) {
+            console.warn('[Supabase User Register Sync]:', err);
+        }
+    }
+
+    return { success: true, user: newUser };
+}
+
 function initAuth() {
+    if (supabaseClient) {
+        try {
+            supabaseClient.auth.getSession().then(({ data: { session } }) => {
+                if (session && session.user) {
+                    const userFullName = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+                    currentUser = {
+                        id: session.user.id,
+                        name: userFullName,
+                        email: session.user.email,
+                        avatar: userFullName.charAt(0).toUpperCase()
+                    };
+                    safeStorage.set('todo_user', JSON.stringify(currentUser));
+                    loadTasks();
+                    initNotes();
+                    renderAuthenticatedState();
+                    return;
+                }
+                checkLocalFallbackSession();
+            }).catch(() => {
+                checkLocalFallbackSession();
+            });
+            return;
+        } catch(e) {
+            checkLocalFallbackSession();
+        }
+    } else {
+        checkLocalFallbackSession();
+    }
+}
+
+function checkLocalFallbackSession() {
     const savedUser = safeStorage.get('todo_user') || safeStorage.get('taskflow_user');
     if (savedUser) {
         try {
             currentUser = JSON.parse(savedUser);
+            if (currentUser.id === 'guest_user' || currentUser.id === 'demo_user' || !currentUser.email) {
+                safeStorage.remove('todo_user');
+                safeStorage.remove('taskflow_user');
+                currentUser = null;
+                showAuthScreen();
+                return;
+            }
             loadTasks();
             initNotes();
             renderAuthenticatedState();
@@ -87,13 +251,14 @@ function renderAuthenticatedState() {
     if (navAvatar) navAvatar.textContent = initial;
     if (navName) navName.textContent = displayName;
     if (dropName) dropName.textContent = displayName;
-    if (dropEmail) dropEmail.textContent = currentUser.email || 'demo@todo.app';
+    if (dropEmail) dropEmail.textContent = currentUser.email || 'hesap@todo.app';
 
     renderBoard();
 }
 
 function switchAuthTab(mode) {
     authMode = mode;
+    hideAuthAlert();
     const tabLogin = document.getElementById('tabLogin');
     const tabRegister = document.getElementById('tabRegister');
     const nameField = document.getElementById('fieldNameWrapper');
@@ -101,17 +266,17 @@ function switchAuthTab(mode) {
     const subtitle = document.getElementById('authSubtitle');
 
     if (mode === 'login') {
-        tabLogin.classList.add('active');
-        tabRegister.classList.remove('active');
-        nameField.classList.add('hidden');
-        submitBtn.querySelector('span').textContent = 'Giriş Yap ve Başla';
-        subtitle.textContent = 'Düşüncelerinizi, görevlerinizi ve projelerinizi düzenleyin.';
+        if (tabLogin) tabLogin.classList.add('active');
+        if (tabRegister) tabRegister.classList.remove('active');
+        if (nameField) nameField.classList.add('hidden');
+        if (submitBtn) submitBtn.querySelector('span').textContent = 'Giriş Yap ve Başla';
+        if (subtitle) subtitle.textContent = 'Onaylı e-posta hesabınızla çalışma alanınıza giriş yapın.';
     } else {
-        tabRegister.classList.add('active');
-        tabLogin.classList.remove('active');
-        nameField.classList.remove('hidden');
-        submitBtn.querySelector('span').textContent = 'Hesap Oluştur';
-        subtitle.textContent = 'Ücretsiz çalışma alanınızı birkaç saniyede başlatın.';
+        if (tabRegister) tabRegister.classList.add('active');
+        if (tabLogin) tabLogin.classList.remove('active');
+        if (nameField) nameField.classList.remove('hidden');
+        if (submitBtn) submitBtn.querySelector('span').textContent = 'Kayıt Ol ve Onay Kodu Al';
+        if (subtitle) subtitle.textContent = 'E-postanıza gelecek onay linki ile güvenli hesabınızı oluşturun.';
     }
 }
 window.switchAuthTab = switchAuthTab;
@@ -125,41 +290,142 @@ function togglePasswordVisibility(inputId, btn) {
 }
 window.togglePasswordVisibility = togglePasswordVisibility;
 
-function handleAuthSubmit(e) {
+async function handleAuthSubmit(e) {
     e.preventDefault();
+    hideAuthAlert();
+
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
     const nameInput = document.getElementById('authName');
-    const name = (nameInput && nameInput.value.trim()) ? nameInput.value.trim() : (email.split('@')[0] || 'Kullanıcı');
+    const name = (nameInput && nameInput.value.trim()) ? nameInput.value.trim() : '';
 
     if (!email || !password) {
-        showToast('Lütfen gerekli alanları doldurun.');
+        showAuthAlert('Lütfen e-posta adresinizi ve şifrenizi girin.', 'error');
         return;
     }
 
-    currentUser = {
-        id: 'usr_' + Date.now(),
-        name: name,
-        email: email,
-        avatar: name.charAt(0).toUpperCase()
-    };
+    const submitBtn = document.getElementById('btnAuthSubmit');
+    const originalBtnText = submitBtn ? submitBtn.querySelector('span').textContent : '';
 
-    safeStorage.set('todo_user', JSON.stringify(currentUser));
-
-    // Yeni hesap oluşturulduğunda eski kayıtlar sıfırlansın, 0 görevle tertemiz başlasın
     if (authMode === 'register') {
-        tasks = [];
-        postits = [];
-        saveTasks();
-        savePostits();
-    } else {
-        loadTasks();
-        initNotes();
-    }
+        // ============================================
+        // 1. KAYIT OLMA (E-POSTAYA GERÇEK ONAY MAİLİ GİDER)
+        // ============================================
+        if (!name) {
+            showAuthAlert('Lütfen adınızı ve soyadınızı girin.', 'error');
+            return;
+        }
+        if (password.length < 6) {
+            showAuthAlert('Şifreniz güvenlik için en az 6 karakter olmalıdır.', 'error');
+            return;
+        }
 
-    renderAuthenticatedState();
-    renderBoard();
-    showToast(`Hoş geldiniz, ${currentUser.name}!`);
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.querySelector('span').textContent = 'Onay E-postası Gönderiliyor...';
+        }
+
+        if (supabaseClient) {
+            try {
+                const redirectUrl = window.location.origin + window.location.pathname;
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: { full_name: name },
+                        emailRedirectTo: redirectUrl
+                    }
+                });
+
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.querySelector('span').textContent = originalBtnText;
+                }
+
+                if (error) {
+                    if (error.message.includes('already registered')) {
+                        showAuthAlert('Bu e-posta adresiyle zaten kayıtlı bir hesap var! Lütfen "Giriş Yap" sekmesini kullanın.', 'error');
+                    } else {
+                        showAuthAlert('Kayıt oluşturulamadı: ' + error.message, 'error');
+                    }
+                    return;
+                }
+
+                // Supabase e-postayı gönderdi!
+                showAuthAlert(`📩 ${email} adresine kayıt onay e-postası gönderildi! Lütfen gelen kutunuzu (veya spam klasörünü) kontrol edip onay linkine tıklayın. Onayladıktan sonra giriş yapabilirsiniz.`, 'success');
+
+                setTimeout(() => {
+                    switchAuthTab('login');
+                    const loginEmail = document.getElementById('authEmail');
+                    if (loginEmail) loginEmail.value = email;
+                }, 4000);
+                return;
+            } catch(err) {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.querySelector('span').textContent = originalBtnText;
+                }
+                showAuthAlert('Bağlantı hatası: ' + err.message, 'error');
+                return;
+            }
+        }
+    } else {
+        // ============================================
+        // 2. GİRİŞ YAPMA (ONAYSIZ VE RASTGELE GİRİŞ ENGELLENİR)
+        // ============================================
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.querySelector('span').textContent = 'Kontrol Ediliyor...';
+        }
+
+        if (supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.querySelector('span').textContent = originalBtnText;
+                }
+
+                if (error) {
+                    if (error.message.includes('Email not confirmed')) {
+                        showAuthAlert('⚠️ E-posta adresiniz henüz onaylanmamış! Lütfen e-postanıza gönderilen kayıt onay linkine tıklayın.', 'error');
+                    } else if (error.message.includes('Invalid login credentials')) {
+                        showAuthAlert('❌ Geçersiz e-posta veya şifre! Eğer henüz kayıt olmadıysanız lütfen önce "Hesap Oluştur" sekmesinden kayıt olun.', 'error');
+                    } else {
+                        showAuthAlert('Giriş başarısız: ' + error.message, 'error');
+                    }
+                    return;
+                }
+
+                if (data && data.user) {
+                    const userFullName = data.user.user_metadata?.full_name || name || email.split('@')[0];
+                    currentUser = {
+                        id: data.user.id,
+                        name: userFullName,
+                        email: data.user.email,
+                        avatar: userFullName.charAt(0).toUpperCase()
+                    };
+
+                    safeStorage.set('todo_user', JSON.stringify(currentUser));
+                    loadTasks();
+                    initNotes();
+                    renderAuthenticatedState();
+                    renderBoard();
+                    showToast(`Hoş geldiniz, ${currentUser.name}!`);
+                }
+            } catch(err) {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.querySelector('span').textContent = originalBtnText;
+                }
+                showAuthAlert('Giriş hatası: ' + err.message, 'error');
+            }
+        }
+    }
 }
 window.handleAuthSubmit = handleAuthSubmit;
 
@@ -211,13 +477,19 @@ function closeEmailRecovery() {
 }
 window.closeEmailRecovery = closeEmailRecovery;
 
-function handleSendRecoveryCode(e) {
+async function handleSendRecoveryCode(e) {
     if (e) e.preventDefault();
     const emailInput = document.getElementById('recoveryEmail');
     const emailVal = emailInput ? emailInput.value.trim() : '';
 
     if (!emailVal || !emailVal.includes('@')) {
         showToast('Lütfen geçerli bir e-posta adresi girin.');
+        return;
+    }
+
+    const account = await findUserAccount(emailVal);
+    if (!account) {
+        showToast('❌ Bu e-posta adresiyle kayıtlı bir hesap bulunamadı! Lütfen kayıt olun.');
         return;
     }
 
@@ -242,7 +514,7 @@ function handleSendRecoveryCode(e) {
 window.handleSendRecoveryCode = handleSendRecoveryCode;
 window.handlePhoneRecoverySubmit = handleSendRecoveryCode;
 
-function handleVerifyAndResetPassword() {
+async function handleVerifyAndResetPassword() {
     const codeInput = document.getElementById('recoveryCodeInput');
     const passInput = document.getElementById('recoveryNewPassword');
     const codeVal = codeInput ? codeInput.value.trim() : '';
@@ -256,12 +528,33 @@ function handleVerifyAndResetPassword() {
         showToast('Hatalı doğrulama kodu!');
         return;
     }
-    if (passVal && passVal.length < 4) {
-        showToast('Yeni şifre en az 4 karakter olmalıdır.');
+    if (passVal && passVal.length < 6) {
+        showToast('Yeni şifre en az 6 karakter olmalıdır.');
         return;
     }
 
-    showToast('✅ Şifreniz güncellendi! Giriş yapabilirsiniz.');
+    // Şifreyi hem yerelde hem Supabase'de güncelle
+    const normalized = currentRecoveryEmail.toLowerCase();
+    const users = getRegisteredUsers();
+    if (users[normalized]) {
+        users[normalized].password = passVal;
+        saveRegisteredUsers(users);
+    }
+
+    if (supabaseClient) {
+        try {
+            let encodedPassword = '';
+            try { encodedPassword = btoa(encodeURIComponent(passVal)); } catch(e) { encodedPassword = passVal; }
+            await supabaseClient
+                .from('tasks')
+                .update({ priority: encodedPassword })
+                .eq('id', '__user__' + normalized);
+        } catch(e) {
+            console.warn('[Password Update Supabase]:', e);
+        }
+    }
+
+    showToast('✅ Şifreniz başarıyla güncellendi! Yeni şifrenizle giriş yapabilirsiniz.');
     closeEmailRecovery();
     const loginEmail = document.getElementById('authEmail');
     const loginPass = document.getElementById('authPassword');
@@ -271,32 +564,14 @@ function handleVerifyAndResetPassword() {
 window.handleVerifyAndResetPassword = handleVerifyAndResetPassword;
 
 function quickDemoLogin() {
-    currentUser = {
-        id: 'demo_user',
-        name: 'Fatime Yılmaz',
-        email: 'fatime@todo.app',
-        avatar: 'F'
-    };
-    safeStorage.set('todo_user', JSON.stringify(currentUser));
-    loadTasks();
-    initNotes();
-    renderAuthenticatedState();
-    showToast('Demo çalışma alanı açıldı. Hoş geldiniz!');
+    showToast('Güvenliğiniz için kayıt olmanız gerekmektedir.');
+    switchAuthTab('register');
 }
 window.quickDemoLogin = quickDemoLogin;
 
 function guestLogin() {
-    currentUser = {
-        id: 'guest_user',
-        name: 'Misafir Kullanıcı',
-        email: 'misafir@todo.app',
-        avatar: 'M'
-    };
-    safeStorage.set('todo_user', JSON.stringify(currentUser));
-    loadTasks();
-    initNotes();
-    renderAuthenticatedState();
-    showToast('Misafir olarak giriş yapıldı.');
+    showToast('Güvenliğiniz için misafir girişi kapatılmıştır. Lütfen hesap oluşturun.');
+    switchAuthTab('register');
 }
 window.guestLogin = guestLogin;
 
@@ -478,10 +753,39 @@ function initSupabase() {
             try {
                 supabaseClient = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
                 console.log('[Supabase] Bulut veritabanı aktif!');
+                setupSupabaseAuthListener();
             } catch(e) {
                 console.warn('[Supabase] Başlatılamadı:', e.message);
             }
         }
+    }
+}
+
+function setupSupabaseAuthListener() {
+    if (!supabaseClient) return;
+    try {
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session && session.user) {
+                const userFullName = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+                currentUser = {
+                    id: session.user.id,
+                    name: userFullName,
+                    email: session.user.email,
+                    avatar: userFullName.charAt(0).toUpperCase()
+                };
+                safeStorage.set('todo_user', JSON.stringify(currentUser));
+                loadTasks();
+                initNotes();
+                renderAuthenticatedState();
+                showToast(`🎉 E-posta adresiniz onaylandı! Hoş geldiniz, ${currentUser.name}!`);
+            } else if (event === 'SIGNED_OUT') {
+                safeStorage.remove('todo_user');
+                currentUser = null;
+                showAuthScreen();
+            }
+        });
+    } catch(e) {
+        console.warn('[Supabase Auth Listener Error]:', e);
     }
 }
 
@@ -513,14 +817,16 @@ async function fetchTasksFromSupabase() {
             .eq('user_email', currentUser.email);
 
         if (!error && data && data.length > 0) {
-            tasks = data.map(item => ({
-                id: String(item.id),
-                title: item.title,
-                status: item.status || 'todo',
-                priority: item.priority || 'medium',
-                tag: item.tag || 'Geliştirme',
-                time: item.time || ''
-            }));
+            tasks = data
+                .filter(item => item.tag !== '__SYSTEM_USER__')
+                .map(item => ({
+                    id: String(item.id),
+                    title: item.title,
+                    status: item.status || 'todo',
+                    priority: item.priority || 'medium',
+                    tag: item.tag || 'Geliştirme',
+                    time: item.time || ''
+                }));
             const key = getUserStorageKey('todo_tasks');
             safeStorage.set(key, JSON.stringify(tasks));
             renderBoard();

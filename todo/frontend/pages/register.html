@@ -35,6 +35,9 @@
                 </a>
             </div>
 
+            <!-- Dynamic Alert Message -->
+            <div id="pageAuthAlert" class="auth-alert hidden"></div>
+
             <!-- Auth Form -->
             <form id="pageRegisterForm" class="auth-form" onsubmit="handleStandaloneRegister(event)">
                 <div class="form-field">
@@ -61,31 +64,146 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-auth-submit">
+                <button type="submit" class="btn-auth-submit" id="btnPageRegister">
                     <span>Hesap Oluştur ve Başla</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </form>
 
             <div class="auth-guest-link">
-                Zaten hesabınız var mı? <a href="login.html">Giriş Yapın</a> veya <a href="../index.html">Panoya Dön</a>
+                Zaten hesabınız var mı? <a href="login.html">Giriş Yapın</a>
             </div>
         </div>
     </div>
 
+    <!-- Supabase SDK & Configuration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+
     <script>
-        function handleStandaloneRegister(e) {
+        let supabaseClient = null;
+        if (typeof supabase !== 'undefined' && typeof SUPABASE_CONFIG !== 'undefined') {
+            if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+                try {
+                    supabaseClient = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+                } catch(e) {}
+            }
+        }
+
+        function showPageAlert(msg, type = 'error') {
+            const box = document.getElementById('pageAuthAlert');
+            if (box) {
+                box.className = `auth-alert ${type}`;
+                box.innerHTML = type === 'error'
+                    ? `<i class="fa-solid fa-circle-exclamation"></i> <span>${msg}</span>`
+                    : `<i class="fa-solid fa-circle-check"></i> <span>${msg}</span>`;
+                box.classList.remove('hidden');
+            }
+        }
+
+        function hidePageAlert() {
+            const box = document.getElementById('pageAuthAlert');
+            if (box) {
+                box.className = 'auth-alert hidden';
+                box.textContent = '';
+            }
+        }
+
+        async function findUserAccount(email) {
+            if (!email) return null;
+            const normalized = email.trim().toLowerCase();
+
+            try {
+                const raw = localStorage.getItem('todo_registered_users');
+                if (raw) {
+                    const localUsers = JSON.parse(raw);
+                    if (localUsers[normalized]) return localUsers[normalized];
+                }
+            } catch(e) {}
+
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('tasks')
+                        .select('*')
+                        .eq('id', '__user__' + normalized)
+                        .single();
+
+                    if (!error && data) {
+                        return {
+                            id: data.id,
+                            name: data.title,
+                            email: normalized
+                        };
+                    }
+                } catch(e) {}
+            }
+            return null;
+        }
+
+        async function handleStandaloneRegister(e) {
             e.preventDefault();
+            hidePageAlert();
+
             const name = document.getElementById('pageRegName').value.trim();
             const email = document.getElementById('pageRegEmail').value.trim();
-            const user = {
-                id: 'usr_' + Date.now(),
-                name: name,
-                email: email,
-                avatar: name.charAt(0).toUpperCase()
-            };
-            localStorage.setItem('todo_user', JSON.stringify(user));
-            window.location.href = '../index.html';
+            const password = document.getElementById('pageRegPassword').value;
+            const submitBtn = document.getElementById('btnPageRegister');
+
+            if (!name || !email || !password) {
+                showPageAlert('Lütfen tüm alanları doldurun.', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showPageAlert('Şifreniz güvenlik için en az 6 karakter olmalıdır.', 'error');
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.querySelector('span').textContent = 'Onay E-postası Gönderiliyor...';
+            }
+
+            if (supabaseClient) {
+                try {
+                    const redirectUrl = window.location.origin + '/index.html';
+                    const { data, error } = await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: { full_name: name },
+                            emailRedirectTo: redirectUrl
+                        }
+                    });
+
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Hesap Oluştur ve Başla';
+                    }
+
+                    if (error) {
+                        if (error.message.includes('already registered')) {
+                            showPageAlert('Bu e-posta adresiyle zaten kayıtlı bir hesap var! Lütfen Giriş Yapın.', 'error');
+                        } else {
+                            showPageAlert('Kayıt oluşturulamadı: ' + error.message, 'error');
+                        }
+                        return;
+                    }
+
+                    showPageAlert(`📩 ${email} adresine kayıt onay e-postası gönderildi! Lütfen gelen kutunuzu (veya spam klasörünü) kontrol edip onay linkine tıklayın. Ardından giriş yapabilirsiniz.`, 'success');
+
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 4000);
+                } catch(err) {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Hesap Oluştur ve Başla';
+                    }
+                    showPageAlert('Bağlantı hatası: ' + err.message, 'error');
+                }
+            }
         }
     </script>
 </body>

@@ -35,6 +35,9 @@
                 </a>
             </div>
 
+            <!-- Dynamic Alert Message -->
+            <div id="pageAuthAlert" class="auth-alert hidden"></div>
+
             <!-- Auth Form -->
             <form id="pageLoginForm" class="auth-form" onsubmit="handleStandaloneLogin(event)">
                 <div class="form-field">
@@ -55,42 +58,159 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-auth-submit">
+                <button type="submit" class="btn-auth-submit" id="btnPageLogin">
                     <span>Giriş Yap ve Panoyu Aç</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </form>
 
             <div class="auth-guest-link">
-                Hesabınız yok mu? <a href="register.html">Ücretsiz kayıt olun</a> veya <a href="../index.html">Panoya Göz Atın</a>
+                Hesabınız yok mu? <a href="register.html">Ücretsiz kayıt olun</a>
             </div>
         </div>
     </div>
 
+    <!-- Supabase SDK & Configuration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+
     <script>
-        function handleStandaloneLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('pageEmail').value.trim();
-            const name = email.split('@')[0] || 'Kullanıcı';
-            const user = {
-                id: 'usr_' + Date.now(),
-                name: name.charAt(0).toUpperCase() + name.slice(1),
-                email: email,
-                avatar: name.charAt(0).toUpperCase()
-            };
-            localStorage.setItem('todo_user', JSON.stringify(user));
-            window.location.href = '../index.html';
+        let supabaseClient = null;
+        if (typeof supabase !== 'undefined' && typeof SUPABASE_CONFIG !== 'undefined') {
+            if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+                try {
+                    supabaseClient = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+                } catch(e) {}
+            }
         }
 
-        function handleStandaloneDemo() {
-            const user = {
-                id: 'demo_user',
-                name: 'Fatime Yılmaz',
-                email: 'fatime@todo.app',
-                avatar: 'F'
-            };
-            localStorage.setItem('todo_user', JSON.stringify(user));
-            window.location.href = '../index.html';
+        function showPageAlert(msg, type = 'error') {
+            const box = document.getElementById('pageAuthAlert');
+            if (box) {
+                box.className = `auth-alert ${type}`;
+                box.innerHTML = type === 'error'
+                    ? `<i class="fa-solid fa-circle-exclamation"></i> <span>${msg}</span>`
+                    : `<i class="fa-solid fa-circle-check"></i> <span>${msg}</span>`;
+                box.classList.remove('hidden');
+            }
+        }
+
+        function hidePageAlert() {
+            const box = document.getElementById('pageAuthAlert');
+            if (box) {
+                box.className = 'auth-alert hidden';
+                box.textContent = '';
+            }
+        }
+
+        async function findUserAccount(email) {
+            if (!email) return null;
+            const normalized = email.trim().toLowerCase();
+
+            // 1. Check localStorage
+            try {
+                const raw = localStorage.getItem('todo_registered_users');
+                if (raw) {
+                    const localUsers = JSON.parse(raw);
+                    if (localUsers[normalized]) return localUsers[normalized];
+                }
+            } catch(e) {}
+
+            // 2. Check Supabase
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('tasks')
+                        .select('*')
+                        .eq('id', '__user__' + normalized)
+                        .single();
+
+                    if (!error && data) {
+                        let password = '';
+                        try {
+                            password = decodeURIComponent(atob(data.priority));
+                        } catch(e) {
+                            password = data.priority || '';
+                        }
+                        const acc = {
+                            id: data.id,
+                            name: data.title || normalized.split('@')[0],
+                            email: normalized,
+                            password: password
+                        };
+                        try {
+                            const raw = localStorage.getItem('todo_registered_users');
+                            const localUsers = raw ? JSON.parse(raw) : {};
+                            localUsers[normalized] = acc;
+                            localStorage.setItem('todo_registered_users', JSON.stringify(localUsers));
+                        } catch(e) {}
+                        return acc;
+                    }
+                } catch(e) {}
+            }
+            return null;
+        }
+
+        async function handleStandaloneLogin(e) {
+            e.preventDefault();
+            hidePageAlert();
+
+            const email = document.getElementById('pageEmail').value.trim();
+            const password = document.getElementById('pagePassword').value;
+            const submitBtn = document.getElementById('btnPageLogin');
+
+            if (!email || !password) {
+                showPageAlert('Lütfen e-posta adresinizi ve şifrenizi girin.', 'error');
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.querySelector('span').textContent = 'Giriş Yapılıyor...';
+            }
+
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Giriş Yap ve Panoyu Aç';
+                    }
+
+                    if (error) {
+                        if (error.message.includes('Email not confirmed')) {
+                            showPageAlert('⚠️ E-posta adresiniz henüz onaylanmamış! Lütfen gelen kutunuza (veya spam klasörüne) gönderilen onay e-postasındaki linke tıklayın.', 'error');
+                        } else if (error.message.includes('Invalid login credentials')) {
+                            showPageAlert('❌ Geçersiz e-posta veya şifre! Eğer henüz kayıt olmadıysanız lütfen önce "Hesap Oluştur" sayfasından kayıt olun.', 'error');
+                        } else {
+                            showPageAlert('Giriş başarısız: ' + error.message, 'error');
+                        }
+                        return;
+                    }
+
+                    if (data && data.user) {
+                        const userFullName = data.user.user_metadata?.full_name || email.split('@')[0];
+                        const user = {
+                            id: data.user.id,
+                            name: userFullName,
+                            email: data.user.email,
+                            avatar: userFullName.charAt(0).toUpperCase()
+                        };
+                        localStorage.setItem('todo_user', JSON.stringify(user));
+                        window.location.href = '../index.html';
+                    }
+                } catch(err) {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Giriş Yap ve Panoyu Aç';
+                    }
+                    showPageAlert('Bağlantı hatası: ' + err.message, 'error');
+                }
+            }
         }
     </script>
 </body>

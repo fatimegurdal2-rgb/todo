@@ -38,6 +38,9 @@
                 </button>
             </div>
 
+            <!-- Dynamic Authentication Alert Message -->
+            <div id="authAlert" class="auth-alert hidden"></div>
+
             <!-- Auth Form -->
             <form id="authForm" class="auth-form" onsubmit="handleAuthSubmit(event)">
                 <!-- Name field (shown on register) -->
@@ -149,9 +152,9 @@
                 </form>
             </div>
 
-            <div class="auth-guest-link">
-                Hesap oluşturmak istemiyor musunuz? 
-                <a onclick="guestLogin()">Misafir olarak devam et</a>
+            <div class="auth-info-note">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Verilerinizin korunması için geçerli bir hesapla giriş yapmanız veya kayıt olmanız gerekmektedir.</span>
             </div>
         </div>
     </div>

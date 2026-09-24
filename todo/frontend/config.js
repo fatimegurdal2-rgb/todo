@@ -8,5 +8,5 @@ const SUPABASE_CONFIG = {
 };
 
 const BACKEND_CONFIG = {
-    apiUrl: 'http://localhost:5000'
+    apiUrl: 'https://todo-wm2v.onrender.com'
 };
