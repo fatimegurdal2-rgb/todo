@@ -39,6 +39,59 @@ app.post('/api/send-test-email', async (req, res) => {
     }
 });
 
+// Debug endpoint to test everything from the browser
+app.get('/debug', async (req, res) => {
+    let debugInfo = {
+        serverTimeUTC: new Date().toISOString(),
+        supabaseUrl: process.env.SUPABASE_URL || 'MISSING',
+        smtpHost: process.env.SMTP_HOST || 'MISSING',
+        smtpUser: process.env.SMTP_USER || 'MISSING',
+        supabaseTest: 'Not started',
+        emailTest: 'Not started'
+    };
+
+    try {
+        // Test Supabase
+        const { createClient } = require('@supabase/supabase-js');
+        const supabase = createClient(
+            process.env.SUPABASE_URL || 'https://missing.supabase.co', 
+            process.env.SUPABASE_SERVICE_ROLE_KEY || 'missing'
+        );
+        
+        const { data: tasks, error: supabaseError } = await supabase.from('tasks').select('*').limit(1);
+        if (supabaseError) {
+            debugInfo.supabaseTest = 'ERROR: ' + supabaseError.message;
+        } else {
+            debugInfo.supabaseTest = `SUCCESS: Found ${tasks ? tasks.length : 0} tasks.`;
+        }
+
+        // Test Email
+        const nodemailer = require('nodemailer');
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+
+        try {
+            await transporter.verify();
+            debugInfo.emailTest = 'SUCCESS: SMTP login verified!';
+        } catch (emailErr) {
+            debugInfo.emailTest = 'ERROR: ' + emailErr.message;
+        }
+
+        res.json(debugInfo);
+    } catch (globalErr) {
+        debugInfo.globalError = globalErr.message;
+        res.status(500).json(debugInfo);
+    }
+});
+
 // Start Cron Service
 startReminderCron();
 
