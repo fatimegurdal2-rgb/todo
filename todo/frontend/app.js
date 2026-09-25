@@ -597,7 +597,14 @@ function guestLogin() {
 }
 window.guestLogin = guestLogin;
 
-function logoutUser() {
+async function logoutUser() {
+    if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+        try {
+            await supabaseClient.auth.signOut();
+        } catch(e) {
+            console.warn('[Logout Error]:', e);
+        }
+    }
     safeStorage.remove('todo_user');
     safeStorage.remove('taskflow_user');
     currentUser = null;
