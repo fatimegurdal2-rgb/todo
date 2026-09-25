@@ -802,11 +802,15 @@ function setupSupabaseAuthListener() {
                     email: session.user.email,
                     avatar: userFullName.charAt(0).toUpperCase()
                 };
+                const wasAlreadyLoggedIn = !!safeStorage.get('todo_user');
                 safeStorage.set('todo_user', JSON.stringify(currentUser));
                 loadTasks();
                 initNotes();
                 renderAuthenticatedState();
-                showToast(`🎉 E-posta adresiniz onaylandı! Hoş geldiniz, ${currentUser.name}!`);
+                
+                if (!wasAlreadyLoggedIn) {
+                    showToast(`🎉 Başarıyla giriş yapıldı! Hoş geldiniz, ${currentUser.name}!`);
+                }
             } else if (event === 'SIGNED_OUT') {
                 safeStorage.remove('todo_user');
                 currentUser = null;
