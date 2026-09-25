@@ -185,9 +185,24 @@
                     if (error) {
                         if (error.message.includes('already registered')) {
                             showPageAlert('Bu e-posta adresiyle zaten kayıtlı bir hesap var! Lütfen Giriş Yapın.', 'error');
+                        } else if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
+                            showPageAlert('⏳ Supabase e-posta limiti aşıldı (Saatte maks 3 e-posta). Çözüm için Supabase panelinde Authentication -> Providers -> Email altından "Confirm email" ayarını kapatabilirsiniz.', 'error');
                         } else {
                             showPageAlert('Kayıt oluşturulamadı: ' + error.message, 'error');
                         }
+                        return;
+                    }
+
+                    if (data && data.session && data.user) {
+                        const userFullName = data.user.user_metadata?.full_name || name || email.split('@')[0];
+                        const user = {
+                            id: data.user.id,
+                            name: userFullName,
+                            email: data.user.email,
+                            avatar: userFullName.charAt(0).toUpperCase()
+                        };
+                        localStorage.setItem('todo_user', JSON.stringify(user));
+                        window.location.href = '../index.html';
                         return;
                     }
 

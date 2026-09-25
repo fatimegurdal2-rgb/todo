@@ -345,13 +345,35 @@ async function handleAuthSubmit(e) {
                 if (error) {
                     if (error.message.includes('already registered')) {
                         showAuthAlert('Bu e-posta adresiyle zaten kayıtlı bir hesap var! Lütfen "Giriş Yap" sekmesini kullanın.', 'error');
+                    } else if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
+                        showAuthAlert('⏳ Supabase e-posta limiti aşıldı (Saatte maks 3 e-posta). Çözüm için Supabase panelinde Authentication -> Providers -> Email altından "Confirm email" ayarını kapatabilirsiniz.', 'error');
                     } else {
                         showAuthAlert('Kayıt oluşturulamadı: ' + error.message, 'error');
                     }
                     return;
                 }
 
-                // Supabase e-postayı gönderdi!
+                // Eğer e-posta onayı kapalıysa doğrudan oturum açılır
+                if (data && data.session && data.user) {
+                    const userFullName = data.user.user_metadata?.full_name || name || email.split('@')[0];
+                    currentUser = {
+                        id: data.user.id,
+                        name: userFullName,
+                        email: data.user.email,
+                        avatar: userFullName.charAt(0).toUpperCase()
+                    };
+                    safeStorage.set('todo_user', JSON.stringify(currentUser));
+                    tasks = [];
+                    postits = [];
+                    saveTasks();
+                    savePostits();
+                    renderAuthenticatedState();
+                    renderBoard();
+                    showToast(`🎉 Tebrikler! Hesabınız başarıyla oluşturuldu. Hoş geldiniz, ${currentUser.name}!`);
+                    return;
+                }
+
+                // E-posta onay linki gönderildiyse:
                 showAuthAlert(`📩 ${email} adresine kayıt onay e-postası gönderildi! Lütfen gelen kutunuzu (veya spam klasörünü) kontrol edip onay linkine tıklayın. Onayladıktan sonra giriş yapabilirsiniz.`, 'success');
 
                 setTimeout(() => {

@@ -4,12 +4,14 @@ require('dotenv').config();
 // Create transporter
 const createTransporter = () => {
     // If SMTP credentials are provided
-    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
         return nodemailer.createTransport({
-            service: process.env.EMAIL_SERVICE || 'gmail',
+            host: process.env.SMTP_HOST || 'smtp.resend.com',
+            port: process.env.SMTP_PORT || 465,
+            secure: true,
             auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
+                user: process.env.SMTP_USER || 'resend',
+                pass: process.env.SMTP_PASS
             }
         });
     }
@@ -23,7 +25,7 @@ const sendReminderEmail = async (toEmail, taskTitle, taskTime) => {
     const formattedDate = new Date(taskTime).toLocaleString('tr-TR');
 
     const mailOptions = {
-        from: `"Notion Pano Hatırlatıcı" <${process.env.EMAIL_USER || 'noreply@notion-todo.com'}>`,
+        from: `"Notion Pano Hatırlatıcı" <${process.env.SMTP_FROM || 'onboarding@resend.dev'}>`,
         to: toEmail,
         subject: `⏰ Hatırlatıcı: ${taskTitle}`,
         html: `

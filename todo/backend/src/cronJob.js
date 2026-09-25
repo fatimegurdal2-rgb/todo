@@ -42,7 +42,7 @@ const startReminderCron = () => {
                 console.log(`[Cron] Zamanı gelen ${tasks.length} adet hatırlatıcı bulundu.`);
 
                 for (const task of tasks) {
-                    const recipientEmail = task.user_email || process.env.DEFAULT_NOTIFICATION_EMAIL || process.env.EMAIL_USER;
+                    const recipientEmail = task.user_email || process.env.DEFAULT_NOTIFICATION_EMAIL || process.env.SMTP_USER || 'onboarding@resend.dev';
 
                     if (recipientEmail) {
                         const sent = await sendReminderEmail(recipientEmail, task.title, task.time);

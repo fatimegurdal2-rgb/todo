@@ -2440,10 +2440,10 @@ body {
     width: 500px;
     max-width: 92vw;
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-xl);
     box-shadow: var(--shadow-dropdown);
     overflow: hidden;
-    animation: authPop 0.18s ease;
+    animation: authPop 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-header-pro {
@@ -2517,6 +2517,7 @@ body {
 }
 .form-input-pro:focus, .form-select-pro:focus {
     border-color: var(--border-focus);
+    box-shadow: 0 0 0 2px rgba(46, 170, 220, 0.2);
 }
 
 .priority-selector-group {
@@ -2562,19 +2563,19 @@ body {
    HIGHLIGHTED DATE & TIME BUILDER PANEL (Modal)
    ============================================================ */
 .modal-datetime-builder-card {
-    background: #f8fafc;
-    border: 1.5px solid #dbeafe;
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-sm);
     padding: 13px 15px;
     display: flex;
     flex-direction: column;
     gap: 11px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 1px 3px rgba(15, 15, 15, 0.04);
 }
 
 [data-theme="dark"] .modal-datetime-builder-card {
-    background: rgba(35, 131, 226, 0.08);
-    border-color: rgba(82, 156, 202, 0.35);
+    background: var(--bg-surface-hover);
+    border-color: var(--border-subtle);
 }
 
 .dt-builder-header {
@@ -2601,9 +2602,9 @@ body {
     letter-spacing: 0.04em;
     padding: 2px 7px;
     border-radius: 999px;
-    background: rgba(35, 131, 226, 0.12);
+    background: var(--primary-subtle);
     color: var(--primary);
-    border: 1px solid rgba(35, 131, 226, 0.25);
+    border: 1px solid var(--primary-border);
 }
 
 .dt-builder-preview-pill {
@@ -2614,9 +2615,9 @@ body {
     font-weight: 700;
     padding: 3px 10px;
     border-radius: 999px;
-    background: #2383e2;
+    background: var(--primary);
     color: #ffffff;
-    box-shadow: 0 1px 4px rgba(35, 131, 226, 0.28);
+    box-shadow: 0 1px 4px var(--accent-glow);
     font-family: 'Outfit', var(--font-heading);
     letter-spacing: 0.01em;
 }
@@ -2665,10 +2666,10 @@ body {
 }
 
 .dt-preset-btn.active {
-    background: #2383e2;
+    background: var(--primary);
     color: #ffffff;
-    border-color: #2383e2;
-    box-shadow: 0 1px 4px rgba(35, 131, 226, 0.25);
+    border-color: var(--primary);
+    box-shadow: 0 1px 4px var(--accent-glow);
 }
 
 .dt-hours-chips {
@@ -2697,9 +2698,9 @@ body {
 }
 
 .dt-hour-chip.active {
-    background: #2383e2;
+    background: var(--primary);
     color: #ffffff;
-    border-color: #2383e2;
+    border-color: var(--primary);
 }
 
 .form-sublabel {
