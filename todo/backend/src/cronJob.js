@@ -22,13 +22,16 @@ const startReminderCron = () => {
         }
 
         try {
-            const now = new Date().toISOString();
-
-            // Find tasks where time <= now, reminder_sent is false (or null), and status != 'done'
+            // Generate current time in YYYY-MM-DDTHH:mm format specifically for Turkey Time (UTC+3)
+            const d = new Date();
+            const istDate = new Date(d.getTime() + (3 * 60 * 60 * 1000));
+            const localNow = istDate.toISOString().slice(0, 16);
+            
+            // Find tasks where time <= localNow
             const { data: tasks, error } = await supabase
                 .from('tasks')
                 .select('*')
-                .lte('time', now)
+                .lte('time', localNow)
                 .neq('status', 'done')
                 .or('reminder_sent.is.null,reminder_sent.eq.false')
                 .not('time', 'is', null);
