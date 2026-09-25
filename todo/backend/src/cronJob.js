@@ -36,6 +36,10 @@ const startReminderCron = () => {
                 .or('reminder_sent.is.null,reminder_sent.eq.false')
                 .not('time', 'is', null);
 
+            // DIAGNOSTIC LOG
+            const { data: allTasks } = await supabase.from('tasks').select('*');
+            console.log(`[Cron Diagnostic] Toplam görev sayısı: ${allTasks ? allTasks.length : 0}. Kullanılan localNow: ${localNow}`);
+
             if (error) {
                 console.error('[Cron Error] Görevler sorgulanırken hata:', error.message);
                 return;
