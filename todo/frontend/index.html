@@ -568,46 +568,13 @@
                             <div class="dt-builder-title">
                                 <i class="fa-solid fa-clock" style="color: var(--primary);"></i>
                                 <span>Tarih & Saat Belirle</span>
-                                <span class="required-pulse-pill">Vurgulu</span>
-                            </div>
-                            <div class="dt-builder-preview-pill" id="dtModalPreviewBadge">
-                                <i class="fa-regular fa-calendar-check"></i>
-                                <span id="dtModalPreviewText">Bugün 18:00</span>
-                            </div>
-                        </div>
-
-                        <!-- Quick Day Presets -->
-                        <div class="dt-presets-group">
-                            <span class="dt-presets-label">Hızlı Tarih:</span>
-                            <div class="dt-presets-buttons">
-                                <button type="button" class="dt-preset-btn active" id="btnPresetToday" onclick="applyDatePreset('today')">
-                                    🔥 Bugün
-                                </button>
-                                <button type="button" class="dt-preset-btn" id="btnPresetTomorrow" onclick="applyDatePreset('tomorrow')">
-                                    📌 Yarın
-                                </button>
-                                <button type="button" class="dt-preset-btn" id="btnPresetNextWeek" onclick="applyDatePreset('nextweek')">
-                                    📆 Pazartesi
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Quick Hour Chips -->
-                        <div class="dt-hours-group">
-                            <span class="dt-presets-label">Hızlı Saat:</span>
-                            <div class="dt-hours-chips">
-                                <button type="button" class="dt-hour-chip" onclick="applyHourPreset('09:00')">09:00 Sabah</button>
-                                <button type="button" class="dt-hour-chip" onclick="applyHourPreset('13:00')">13:00 Öğlen</button>
-                                <button type="button" class="dt-hour-chip" onclick="applyHourPreset('15:30')">15:30 İkindi</button>
-                                <button type="button" class="dt-hour-chip active" onclick="applyHourPreset('18:00')">18:00 Akşam</button>
-                                <button type="button" class="dt-hour-chip" onclick="applyHourPreset('21:00')">21:00 Gece</button>
+                                <span class="required-pulse-pill">Zorunlu</span>
                             </div>
                         </div>
 
                         <!-- Exact datetime-local input -->
-                        <div>
-                            <label class="form-sublabel" for="taskTime">Özel Tarih & Saat:</label>
-                            <input type="datetime-local" id="taskTime" class="form-input-pro dt-custom-input" onchange="onCustomDateTimeChange(this.value)">
+                        <div style="margin-top: 10px;">
+                            <input type="datetime-local" id="taskTime" class="form-input-pro dt-custom-input" style="width: 100%; padding: 12px 14px; font-size: 15px;" required>
                         </div>
                     </div>
                 </div>

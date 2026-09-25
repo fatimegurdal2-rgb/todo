@@ -2753,15 +2753,148 @@ body {
 }
 .toast-icon { color: #6bc987; }
 
-/* Responsive */
+/* Responsive & Mobile Compatibility */
 @media (max-width: 990px) {
     .kanban-board {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
+}
+
+@media (max-width: 768px) {
+    /* Navbar */
+    .top-navbar {
+        padding: 0 12px;
+        height: auto;
+        min-height: 52px;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .nav-left, .nav-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .search-input-nav {
+        width: 130px;
+    }
+    .search-input-nav:focus {
+        width: 160px;
+    }
+    .nav-tabs {
+        width: 100%;
+        justify-content: space-around;
+        margin-top: 5px;
+    }
+
+    /* Headers */
     .notion-page-header {
-        padding: 20px 20px 10px 20px;
+        padding: 20px 16px 10px 16px;
     }
+    .notion-page-header.centered-header {
+        padding: 24px 16px 12px 16px;
+    }
+    .view-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .view-controls-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    /* Board & Lists */
     .kanban-board {
-        padding: 10px 20px 30px 20px;
+        padding: 10px 16px 30px 16px;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+    .board-column {
+        min-width: 100%;
+    }
+    .list-view-content {
+        padding: 0 16px 30px 16px;
+    }
+    .notion-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .list-item-left, .list-item-right {
+        width: 100%;
+    }
+    .list-item-right {
+        justify-content: space-between;
+        padding-left: 28px;
+    }
+    .list-item-actions {
+        opacity: 1;
+    }
+    
+    /* Timeline */
+    .timeline-content {
+        padding: 0 16px 30px 16px;
+    }
+    .timeline-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .timeline-date-col {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+        padding-bottom: 8px;
+        text-align: left;
+    }
+
+    /* Modals */
+    .notion-modal {
+        width: 92%;
+        margin: 20px auto;
+        padding: 20px;
+    }
+    .auth-card {
+        padding: 30px 24px;
+        margin: 20px;
+        width: 100%;
+    }
+
+    /* Calendar */
+    .calendar-content {
+        padding: 0 10px 30px 10px;
+    }
+    .calendar-grid {
+        grid-template-columns: repeat(7, 1fr);
+        font-size: 11px;
+    }
+    .calendar-day-header {
+        padding: 6px 2px;
+        font-size: 11px;
+    }
+    .calendar-day {
+        min-height: 80px;
+        padding: 4px;
+    }
+    .cal-task {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .notion-icon-badge {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    .auth-brand-name {
+        font-size: 20px;
+    }
+    .view-title-text {
+        font-size: 22px;
     }
 }
