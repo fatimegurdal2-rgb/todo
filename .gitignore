@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Node Dependencies
+node_modules/
+
+# Environment Variables & Secrets
+.env
+backend/.env
+
+# Logs
+*.log
+npm-debug.log*
