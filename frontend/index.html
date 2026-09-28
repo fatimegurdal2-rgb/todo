@@ -11,6 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Caveat:wght@600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
     <!-- FontAwesome 6 icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Flatpickr Date Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/tr.js"></script>
 </head>
 <body>
 
@@ -527,21 +532,35 @@
                     <div class="modal-row-grid">
                         <div>
                             <label class="form-label-pro" for="taskStatus">Sütun (Durum)</label>
-                            <select id="taskStatus" class="form-select-pro">
-                                <option value="todo">📌 Yapılacaklar</option>
-                                <option value="progress">⚡ Devam Edenler</option>
-                                <option value="done">✅ Tamamlandı</option>
-                            </select>
+                            <div class="custom-dropdown-pro" id="statusDropdown" onclick="toggleDropdown('statusOptions')">
+                                <div class="dropdown-selected-pro">
+                                    <span id="statusSelectedText">📌 Yapılacaklar</span>
+                                    <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                                </div>
+                                <div class="dropdown-options-pro hidden" id="statusOptions">
+                                    <div class="dropdown-option-pro" onclick="selectDropdownOption('status', 'todo', '📌 Yapılacaklar', event)">📌 Yapılacaklar</div>
+                                    <div class="dropdown-option-pro" onclick="selectDropdownOption('status', 'progress', '⚡ Devam Edenler', event)">⚡ Devam Edenler</div>
+                                    <div class="dropdown-option-pro" onclick="selectDropdownOption('status', 'done', '✅ Tamamlandı', event)">✅ Tamamlandı</div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="taskStatus" value="todo">
                         </div>
                         <div>
                             <label class="form-label-pro" for="taskTag">Etiket</label>
-                            <select id="taskTag" class="form-select-pro">
-                                <option value="Tasarım">🎨 Tasarım</option>
-                                <option value="Geliştirme">💻 Geliştirme</option>
-                                <option value="Pazarlama">📈 Pazarlama</option>
-                                <option value="Toplantı">📅 Toplantı</option>
-                                <option value="Kişisel">📝 Kişisel</option>
-                            </select>
+                            <div class="custom-dropdown-pro" id="tagDropdown" onclick="toggleDropdown('tagOptions')">
+                                <div class="dropdown-selected-pro">
+                                    <span id="tagSelectedText">🎨 Tasarım</span>
+                                    <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                                </div>
+                                <div class="dropdown-options-pro hidden" id="tagOptions">
+                                    <div class="dropdown-option-pro" onclick="selectDropdownOption('tag', 'Tasarım', '🎨 Tasarım', event)">🎨 Tasarım</div>
+                                    <div class="dropdown-option-pro" onclick="selectDropdownOption('tag', 'Geliştirme', '💻 Geliştirme', event)">💻 Geliştirme</div>
+                                    <div class="dropdown-option-pro" onclick="selectDropdownOption('tag', 'Pazarlama', '📈 Pazarlama', event)">📈 Pazarlama</div>
+                                    <div class="dropdown-option-pro" onclick="selectDropdownOption('tag', 'Toplantı', '📅 Toplantı', event)">📅 Toplantı</div>
+                                    <div class="dropdown-option-pro" onclick="selectDropdownOption('tag', 'Kişisel', '📝 Kişisel', event)">📝 Kişisel</div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="taskTag" value="Tasarım">
                         </div>
                     </div>
 

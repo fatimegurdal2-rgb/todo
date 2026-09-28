@@ -1343,6 +1343,12 @@ function openNewTaskModal(status = 'todo', taskId = null) {
         applyHourPreset('18:00');
     }
 
+    // Sync custom dropdown text
+    const statusMap = { 'todo': '📌 Yapılacaklar', 'progress': '⚡ Devam Edenler', 'done': '✅ Tamamlandı' };
+    const tagMap = { 'Tasarım': '🎨 Tasarım', 'Geliştirme': '💻 Geliştirme', 'Pazarlama': '📈 Pazarlama', 'Toplantı': '📅 Toplantı', 'Kişisel': '📝 Kişisel' };
+    document.getElementById('statusSelectedText').innerText = statusMap[statusSelect.value] || '📌 Yapılacaklar';
+    document.getElementById('tagSelectedText').innerText = tagMap[tagSelect.value] || '🎨 Tasarım';
+
     modal.classList.remove('hidden');
     setTimeout(() => titleInput.focus(), 60);
 }
@@ -2090,3 +2096,47 @@ function logActivityToFirebase(action, taskTitle) {
         user: userEmail
     }).catch(err => console.error("Firebase log yazılamadı:", err));
 }
+
+// ============================================================
+// CUSTOM DROPDOWNS & FLATPICKR LOGIC
+// ============================================================
+function toggleDropdown(optionsId) {
+    document.querySelectorAll('.dropdown-options-pro').forEach(el => {
+        if (el.id !== optionsId) el.classList.add('hidden');
+    });
+    const optionsEl = document.getElementById(optionsId);
+    if (optionsEl) optionsEl.classList.toggle('hidden');
+}
+window.toggleDropdown = toggleDropdown;
+
+function selectDropdownOption(type, value, text, event) {
+    if (event) event.stopPropagation();
+    if (type === 'status') {
+        document.getElementById('taskStatus').value = value;
+        document.getElementById('statusSelectedText').innerText = text;
+        document.getElementById('statusOptions').classList.add('hidden');
+    } else if (type === 'tag') {
+        document.getElementById('taskTag').value = value;
+        document.getElementById('tagSelectedText').innerText = text;
+        document.getElementById('tagOptions').classList.add('hidden');
+    }
+}
+window.selectDropdownOption = selectDropdownOption;
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.custom-dropdown-pro')) {
+        document.querySelectorAll('.dropdown-options-pro').forEach(el => el.classList.add('hidden'));
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof flatpickr !== 'undefined') {
+        flatpickr("#taskTime", {
+            enableTime: true,
+            dateFormat: "Y-m-d\\TH:i",
+            time_24hr: true,
+            locale: "tr",
+            disableMobile: true // Prevent mobile native picker to force our premium flatpickr UI
+        });
+    }
+});
