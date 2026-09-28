@@ -585,15 +585,21 @@
                     <div class="modal-datetime-builder-card">
                         <div class="dt-builder-header">
                             <div class="dt-builder-title">
-                                <i class="fa-solid fa-clock" style="color: var(--primary);"></i>
-                                <span>Tarih & Saat Belirle</span>
+                                <i class="fa-solid fa-calendar-days" style="color: var(--primary);"></i>
+                                <span>Tarih ve Saat</span>
                                 <span class="required-pulse-pill">Zorunlu</span>
                             </div>
                         </div>
 
-                        <!-- Exact datetime-local input -->
-                        <div style="margin-top: 10px;">
-                            <input type="datetime-local" id="taskTime" class="form-input-pro dt-custom-input" style="width: 100%; padding: 12px 14px; font-size: 15px;" required>
+                        <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <label class="form-label-pro" style="font-size: 11px; margin-bottom: 4px;">TARİH</label>
+                                <input type="text" id="taskDateOnly" class="form-input-pro dt-custom-input" style="width: 100%; padding: 12px 14px; font-size: 14px;" placeholder="Tarih seçin..." required>
+                            </div>
+                            <div>
+                                <label class="form-label-pro" style="font-size: 11px; margin-bottom: 4px;">SAAT</label>
+                                <input type="text" id="taskTimeOnly" class="form-input-pro dt-custom-input" style="width: 100%; padding: 12px 14px; font-size: 14px;" placeholder="Saat seçin..." required>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1310,7 +1310,8 @@ function openNewTaskModal(status = 'todo', taskId = null) {
     const titleInput = document.getElementById('taskTitle');
     const statusSelect = document.getElementById('taskStatus');
     const tagSelect = document.getElementById('taskTag');
-    const timeInput = document.getElementById('taskTime');
+    const dateInput = document.getElementById('taskDateOnly');
+    const timeInput = document.getElementById('taskTimeOnly');
 
     if (taskId) {
         const task = tasks.find(t => t.id === taskId);
@@ -1320,15 +1321,15 @@ function openNewTaskModal(status = 'todo', taskId = null) {
             titleInput.value = task.title;
             statusSelect.value = task.status;
             tagSelect.value = task.tag || 'Geliştirme';
-            timeInput.value = task.time || '';
             selectPriority(task.priority || 'medium');
 
-            if (task.time) {
-                updateModalDateTimePreview(task.time);
-                syncModalPresetButtonsWithDate(task.time);
+            if (task.time && task.time.includes('T')) {
+                const parts = task.time.split('T');
+                dateInput.value = parts[0];
+                timeInput.value = parts[1].substring(0, 5);
             } else {
-                applyDatePreset('today');
-                applyHourPreset('18:00');
+                dateInput.value = '';
+                timeInput.value = '';
             }
         }
     } else {
@@ -1338,9 +1339,14 @@ function openNewTaskModal(status = 'todo', taskId = null) {
         statusSelect.value = status;
         tagSelect.value = 'Tasarım';
         selectPriority('medium');
-        // Default new tasks to Today 18:00
-        applyDatePreset('today');
-        applyHourPreset('18:00');
+        
+        // Varsayılan: Bugün ve 18:00
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        dateInput.value = `${yyyy}-${mm}-${dd}`;
+        timeInput.value = '18:00';
     }
 
     // Sync custom dropdown text
@@ -1733,7 +1739,9 @@ function handleTaskFormSubmit(e) {
     const status = document.getElementById('taskStatus').value;
     const tag = document.getElementById('taskTag').value;
     const priority = document.getElementById('taskPriority').value || 'medium';
-    const time = document.getElementById('taskTime').value;
+    const datePart = document.getElementById('taskDateOnly').value;
+    const timePart = document.getElementById('taskTimeOnly').value;
+    const time = (datePart && timePart) ? `${datePart}T${timePart}` : '';
 
     if (!title) return;
 
@@ -2131,12 +2139,18 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof flatpickr !== 'undefined') {
-        flatpickr("#taskTime", {
+        flatpickr("#taskDateOnly", {
+            dateFormat: "Y-m-d",
+            locale: "tr",
+            disableMobile: true
+        });
+        flatpickr("#taskTimeOnly", {
             enableTime: true,
-            dateFormat: "Y-m-d\\TH:i",
+            noCalendar: true,
+            dateFormat: "H:i",
             time_24hr: true,
             locale: "tr",
-            disableMobile: true // Prevent mobile native picker to force our premium flatpickr UI
+            disableMobile: true
         });
     }
 });
