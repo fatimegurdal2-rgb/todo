@@ -2838,6 +2838,19 @@ body {
 }
 
 @media (max-width: 768px) {
+    /* Enable Native Mobile Scrolling */
+    body {
+        height: auto !important;
+        overflow-y: auto !important;
+    }
+    .app-container {
+        height: auto !important;
+        overflow: visible !important;
+    }
+    .view-section {
+        height: auto !important;
+    }
+
     /* Navbar */
     .top-navbar {
         padding: 0 12px;
