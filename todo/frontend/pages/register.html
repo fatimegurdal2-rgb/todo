@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol - Todo</title>
+    <link rel="stylesheet" href="../style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="auth-wrapper" style="position: relative; min-height: 100vh;">
+        <div class="auth-ambient-orb orb-1"></div>
+        <div class="auth-ambient-orb orb-2"></div>
+
+        <div class="auth-card">
+            <!-- Brand Header -->
+            <div class="auth-header">
+                <div class="notion-icon-badge">🎯</div>
+                <h2 class="auth-brand-name">Todo</h2>
+                <p class="auth-subtitle">Notion tarzı ücretsiz çalışma alanınızı oluşturun.</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="auth-tabs">
+                <a href="login.html" class="auth-tab" style="text-decoration: none;">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Giriş Yap
+                </a>
+                <a href="register.html" class="auth-tab active" style="text-decoration: none;">
+                    <i class="fa-solid fa-user-plus"></i> Hesap Oluştur
+                </a>
+            </div>
+
+            <!-- Dynamic Alert Message -->
+            <div id="pageAuthAlert" class="auth-alert hidden"></div>
+
+            <!-- Auth Form -->
+            <form id="pageRegisterForm" class="auth-form" onsubmit="handleStandaloneRegister(event)">
+                <div class="form-field">
+                    <label for="pageRegName">Adınız ve Soyadınız</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input type="text" id="pageRegName" class="auth-input" placeholder="Örn: Fatime Yılmaz" required>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="pageRegEmail">E-posta</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                        <input type="email" id="pageRegEmail" class="auth-input" placeholder="adiniz@sirket.com" required>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="pageRegPassword">Şifre</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="pageRegPassword" class="auth-input" placeholder="En az 6 karakter" minlength="6" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth-submit" id="btnPageRegister">
+                    <span>Hesap Oluştur ve Başla</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="auth-guest-link">
+                Zaten hesabınız var mı? <a href="login.html">Giriş Yapın</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase SDK & Configuration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+
+    <script>
+        let supabaseClient = null;
+        if (typeof supabase !== 'undefined' && typeof SUPABASE_CONFIG !== 'undefined') {
+            if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+                try {
+                    supabaseClient = supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+                } catch(e) {}
+            }
+        }
+
+        function showPageAlert(msg, type = 'error') {
+            const box = document.getElementById('pageAuthAlert');
+            if (box) {
+                box.className = `auth-alert ${type}`;
+                box.innerHTML = type === 'error'
+                    ? `<i class="fa-solid fa-circle-exclamation"></i> <span>${msg}</span>`
+                    : `<i class="fa-solid fa-circle-check"></i> <span>${msg}</span>`;
+                box.classList.remove('hidden');
+            }
+        }
+
+        function hidePageAlert() {
+            const box = document.getElementById('pageAuthAlert');
+            if (box) {
+                box.className = 'auth-alert hidden';
+                box.textContent = '';
+            }
+        }
+
+        async function findUserAccount(email) {
+            if (!email) return null;
+            const normalized = email.trim().toLowerCase();
+
+            try {
+                const raw = localStorage.getItem('todo_registered_users');
+                if (raw) {
+                    const localUsers = JSON.parse(raw);
+                    if (localUsers[normalized]) return localUsers[normalized];
+                }
+            } catch(e) {}
+
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('tasks')
+                        .select('*')
+                        .eq('id', '__user__' + normalized)
+                        .single();
+
+                    if (!error && data) {
+                        return {
+                            id: data.id,
+                            name: data.title,
+                            email: normalized
+                        };
+                    }
+                } catch(e) {}
+            }
+            return null;
+        }
+
+        async function handleStandaloneRegister(e) {
+            e.preventDefault();
+            hidePageAlert();
+
+            const name = document.getElementById('pageRegName').value.trim();
+            const email = document.getElementById('pageRegEmail').value.trim();
+            const password = document.getElementById('pageRegPassword').value;
+            const submitBtn = document.getElementById('btnPageRegister');
+
+            if (!name || !email || !password) {
+                showPageAlert('Lütfen tüm alanları doldurun.', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showPageAlert('Şifreniz güvenlik için en az 6 karakter olmalıdır.', 'error');
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.querySelector('span').textContent = 'Onay E-postası Gönderiliyor...';
+            }
+
+            if (supabaseClient) {
+                try {
+                    const redirectUrl = window.location.origin + '/index.html';
+                    const { data, error } = await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: { full_name: name },
+                            emailRedirectTo: redirectUrl
+                        }
+                    });
+
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Hesap Oluştur ve Başla';
+                    }
+
+                    if (error) {
+                        if (error.message.includes('already registered')) {
+                            showPageAlert('Bu e-posta adresiyle zaten kayıtlı bir hesap var! Lütfen Giriş Yapın.', 'error');
+                        } else if (error.message.includes('rate limit') || error.message.includes('over_email_send_rate_limit')) {
+                            showPageAlert('⏳ Supabase e-posta limiti aşıldı (Saatte maks 3 e-posta). Çözüm için Supabase panelinde Authentication -> Providers -> Email altından "Confirm email" ayarını kapatabilirsiniz.', 'error');
+                        } else {
+                            showPageAlert('Kayıt oluşturulamadı: ' + error.message, 'error');
+                        }
+                        return;
+                    }
+
+                    if (data && data.session && data.user) {
+                        const userFullName = data.user.user_metadata?.full_name || name || email.split('@')[0];
+                        const user = {
+                            id: data.user.id,
+                            name: userFullName,
+                            email: data.user.email,
+                            avatar: userFullName.charAt(0).toUpperCase()
+                        };
+                        localStorage.setItem('todo_user', JSON.stringify(user));
+                        window.location.href = '../index.html';
+                        return;
+                    }
+
+                    showPageAlert(`📩 ${email} adresine kayıt onay e-postası gönderildi! Lütfen gelen kutunuzu (veya spam klasörünü) kontrol edip onay linkine tıklayın. Ardından giriş yapabilirsiniz.`, 'success');
+
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 4000);
+                } catch(err) {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.querySelector('span').textContent = 'Hesap Oluştur ve Başla';
+                    }
+                    showPageAlert('Bağlantı hatası: ' + err.message, 'error');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
