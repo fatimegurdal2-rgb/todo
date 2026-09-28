@@ -2437,40 +2437,52 @@ body {
 
 .modal-pro {
     background: var(--bg-surface);
-    width: 500px;
-    max-width: 92vw;
+    width: 480px;
+    max-width: 95vw;
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-dropdown);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    max-height: 95vh;
+    display: flex;
+    flex-direction: column;
     animation: authPop 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-pro form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
 }
 
 .modal-header-pro {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
+    padding: 24px;
     border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-surface-subtle);
 }
 
 .modal-title-pro {
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 17px;
+    font-weight: 700;
     color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 8px;
+    font-family: var(--font-heading);
 }
 
 .modal-close-btn {
     background: transparent;
     border: none;
     color: var(--text-muted);
-    font-size: 15px;
+    font-size: 16px;
     cursor: pointer;
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--radius-xs);
     display: flex;
     align-items: center;
@@ -2483,54 +2495,55 @@ body {
 }
 
 .modal-body-pro {
-    padding: 20px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
+    overflow-y: auto;
 }
 
 .modal-row-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 16px;
 }
 
 .form-label-pro {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--text-secondary);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     display: block;
 }
 
 .form-input-pro, .form-select-pro {
     width: 100%;
-    padding: 8px 12px;
+    padding: 12px 14px;
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
     color: var(--text-primary);
     font-family: var(--font-sans);
-    font-size: 13.5px;
+    font-size: 14px;
     outline: none;
     transition: var(--transition);
 }
 .form-input-pro:focus, .form-select-pro:focus {
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 2px rgba(46, 170, 220, 0.2);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-subtle);
 }
 
 .priority-selector-group {
     display: flex;
-    gap: 6px;
+    gap: 10px;
 }
 .prio-btn-option {
     flex: 1;
     border: 1px solid var(--border-subtle);
     background: var(--bg-surface-subtle);
-    padding: 6px 10px;
-    border-radius: var(--radius-xs);
-    font-size: 12px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     display: flex;
@@ -2540,22 +2553,25 @@ body {
     transition: var(--transition);
     color: var(--text-secondary);
 }
+.prio-btn-option:hover {
+    background: var(--bg-surface-hover);
+}
 .prio-btn-option.active.high {
     background: var(--tag-red-bg);
     color: var(--tag-red-text);
-    border-color: transparent;
+    border-color: var(--tag-red-text);
     font-weight: 600;
 }
 .prio-btn-option.active.medium {
     background: var(--tag-yellow-bg);
     color: var(--tag-yellow-text);
-    border-color: transparent;
+    border-color: var(--tag-yellow-text);
     font-weight: 600;
 }
 .prio-btn-option.active.low {
     background: var(--tag-green-bg);
     color: var(--tag-green-text);
-    border-color: transparent;
+    border-color: var(--tag-green-text);
     font-weight: 600;
 }
 
@@ -2720,8 +2736,8 @@ body {
 .modal-footer-pro {
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
-    padding: 14px 20px;
+    gap: 12px;
+    padding: 20px 24px;
     background: var(--bg-surface-subtle);
     border-top: 1px solid var(--border-subtle);
 }
@@ -2795,14 +2811,20 @@ body {
     .notion-page-header.centered-header {
         padding: 24px 16px 12px 16px;
     }
-    .view-controls {
+    .notion-controls-row {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
         gap: 12px;
     }
-    .view-controls-right {
-        width: 100%;
-        justify-content: space-between;
+    .notion-filter-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .notion-filter-btn {
+        flex: 1 1 calc(50% - 8px);
+        justify-content: center;
+        text-align: center;
     }
     
     /* Board & Lists */
@@ -2852,10 +2874,23 @@ body {
     }
 
     /* Modals */
-    .notion-modal {
-        width: 92%;
-        margin: 20px auto;
+    .modal-pro {
+        width: 96%;
+        margin: auto;
+    }
+    .modal-row-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .modal-header-pro, .modal-body-pro, .modal-footer-pro {
         padding: 20px;
+    }
+    .priority-selector-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .prio-btn-option {
+        padding: 12px 14px;
     }
     .auth-card {
         padding: 30px 24px;
