@@ -14,7 +14,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "5000:5000" # Dışarıdan 5000 portu ile erişilebilir
+      - "5001:5000" # Mac'lerde 5000 portu dolu olabildiği için dışarıya 5001 olarak açıyoruz
     env_file:
       - ./backend/.env # Çevresel değişkenleri (.env) içeri aktarıyoruz
     restart: unless-stopped
