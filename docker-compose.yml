@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  # Frontend Servisi (Sitemizin arayüzü)
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80" # Dışarıdan 8080 portu ile erişeceğiz (http://localhost:8080)
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+  # Backend Servisi (Hatırlatıcı vb. işler)
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000" # Dışarıdan 5000 portu ile erişilebilir
+    env_file:
+      - ./backend/.env # Çevresel değişkenleri (.env) içeri aktarıyoruz
+    restart: unless-stopped
