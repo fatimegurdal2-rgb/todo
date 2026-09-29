@@ -16,15 +16,6 @@ const sendReminderEmail = async (toEmail, taskTitle, taskTime) => {
         // Use native fetch if available (Node 18+), otherwise use node-fetch
         const fetchFn = typeof fetch !== 'undefined' ? fetch : (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-        const response = await fetchFn('https://api.emailjs.com/api/v1.0/email/send', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                service_id: SERVICE_ID,
-                template_id: TEMPLATE_ID,
-                user_id: PUBLIC_KEY,
         // Tarihi Türkiye saat dilimine uygun formatla
         let formattedTime = taskTime;
         try {
