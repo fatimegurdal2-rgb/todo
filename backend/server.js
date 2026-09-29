@@ -37,6 +37,8 @@ app.post('/api/send-test-email', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
 // Direct reminder endpoint (called from frontend or external scheduler)
 app.post('/api/send-reminder', async (req, res) => {
     const { taskId, email, title, time } = req.body;
